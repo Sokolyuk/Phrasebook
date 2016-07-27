@@ -51,7 +51,7 @@ create view vwu_card as select c.id as `id`, cl.lang_id as `lang_id`, l.name as 
 	left outer join tag t on t.id=ct.tag_id
 	left outer join card_lang cl on cl.card_id=c.id
 	left outer join lang l on l.id=cl.lang_id
-order by c.id, cl.lang_id, ct.tag_id;
+order by c.id
 ;
 --select * from vwu_card;
 

@@ -7,9 +7,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.jkfsoft.phrasebook.model.Card;
+import com.jkfsoft.phrasebook.model.CardText;
 import com.jkfsoft.phrasebook.model.Lang;
 import com.jkfsoft.phrasebook.model.Tag;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         //stub !!! must redesigned
         db.execSQL("CREATE TABLE `tag` (\n" +
                     "\t`id`\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
@@ -70,7 +71,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                     "\tleft outer join tag t on t.id=ct.tag_id\n" +
                     "\tleft outer join card_lang cl on cl.card_id=c.id\n" +
                     "\tleft outer join lang l on l.id=cl.lang_id\n" +
-                    "order by c.id, cl.lang_id, ct.tag_id;");
+                    "order by c.id;");
 
         db.execSQL("insert into `lang` (name)values('En');\n");
         db.execSQL("insert into `lang` (name)values('De');\n");
@@ -78,10 +79,12 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL("insert into tag (`name`)values('Hochsprache');\n");
         db.execSQL("insert into tag (`name`)values('Umgangsprach');\n");
-        db.execSQL("insert into tag (`name`)values('Geschäfte');\n");
-        db.execSQL("insert into tag (`name`)values('Offene Verkehr');\n");
+
+
+        db.execSQL("insert into tag (`name`)values('Geschäfte');");
+        db.execSQL("insert into tag (`name`)values('Offene Verkehr');");
         db.execSQL("insert into tag (`name`)values('Hause');\n");
-        db.execSQL("insert into tag (`name`)values('Straße');\n");
+        db.execSQL("insert into tag (`name`)values('Straße');");
         db.execSQL("insert into tag (`name`)values('Arbeit');\n");
 
         db.execSQL("insert into card (learned)values(0);\n");
@@ -95,7 +98,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL("insert into card_tag (card_id,tag_id)values(3,7);\n");
 
         db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,1,'All roads lead to Rome');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,2,'Alle Wege führen nach Rom');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,2,'Alle Wege führen nach Rom');");
+
         db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,3,'Все дороги ведут в Рим');\n");
 
         db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,1,'Cause time fun hour');\n");
@@ -182,14 +186,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    private Lang _loadLang(Cursor cur) {
-
-    }
-
-    private Tag _loadTag(Cursor cur) {
-
-    }
-
     public List<Card> selectCards() {
         ArrayList<Card> res = new ArrayList<>();
         try(
@@ -197,40 +193,53 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                 Cursor cur = d.query(TblCards.TBL_NAME, null, null, null, null, null, null);
         ){
             if (cur != null) {
-                label_card_id:
+
+                //region calling optimization
+                //optimize while. Only ones call getColumnIndex()
+                int i_col_id = cur.getColumnIndex(TblCards.COL_NAME_ID);
+                int i_col_text = cur.getColumnIndex(TblCards.COL_NAME_TEXT);
+                int i_col_lang_id = cur.getColumnIndex(TblCards.COL_NAME_LANG_ID);
+                int i_col_lang_name = cur.getColumnIndex(TblCards.COL_NAME_LANG_NAME);
+                int i_col_tag_id = cur.getColumnIndex(TblCards.COL_NAME_TAG_ID);
+                int i_col_tag_name = cur.getColumnIndex(TblCards.COL_NAME_TAG_NAME);
+                //endregion
+
+                //parsing cursor
+                long id_prev = 0;
+                Card card = null;
                 while(cur.moveToNext()){
-                    long id = cur.getLong(cur.getColumnIndex(TblCards.COL_NAME_ID));
+                    long id = cur.getLong(i_col_id);
 
-                    Card card = new Card(id);
-
-
-
-
-                    label_lang_id:
-                    while(cur.moveToNext()){
-
-
-                        label_tag_id:
-                        while(cur.moveToNext()){
-
-                        }
-
-
-
+                    //resultset is multiple rows, because in select used join
+                    if (id != id_prev) {
+                        card = new Card(id);
                     }
 
+                    //Add CardText
+                    if (!cur.isNull(i_col_lang_id)) {
+                        long lang_id = cur.getLong(i_col_lang_id);
+                        //try add new CardText by id
+                        card.tryAddCardText(lang_id, ()->{
+                            //if id not found then callback
+                            return new CardText(cur.getString(i_col_text), lang_id, cur.getString(i_col_lang_name));
+                        });
+                    }
 
-                    String text = cur.getString(cur.getColumnIndex(TblCards.COL_NAME_TEXT));
+                    //Add Tag
+                    if (!cur.isNull(i_col_tag_id)) {
+                        long tag_id = cur.getLong(i_col_tag_id);
+                        //try add new Tag by id
+                        card.tryAddTag(tag_id, ()->{
+                            //if id not found then callback
+                            return new Tag(tag_id, cur.getString(i_col_tag_name));
+                        });
+                    }
 
-                    long lang_id = cur.getLong(cur.getColumnIndex(TblCards.COL_NAME_LANG_ID));
-                    String lang_name = cur.getString(cur.getColumnIndex(TblCards.COL_NAME_LANG_NAME));
-
-                    long tag_id = cur.getLong(cur.getColumnIndex(TblCards.COL_NAME_TAG_ID));
-                    String tag_name = cur.getString(cur.getColumnIndex(TblCards.COL_NAME_LANG_NAME));
-
-
-
-                    res.add(card);
+                    //only first row of resultset need to add as new element
+                    if (id != id_prev) {
+                        id_prev = id;
+                        res.add(card);
+                    }
                 }
             }
         }

@@ -12,6 +12,11 @@ public class CardText {
         this.lang = lang;
     }
 
+    public CardText(String text, long lang_id, String lang_name) {
+        this.text = text;
+        this.lang = new Lang(lang_id, lang_name);
+    }
+
     public String getText() {
         return text;
     }
