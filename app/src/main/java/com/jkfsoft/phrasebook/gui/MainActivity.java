@@ -1,4 +1,4 @@
-package com.jkfsoft.phrasebook;
+package com.jkfsoft.phrasebook.gui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,6 +23,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jkfsoft.phrasebook.R;
+import com.jkfsoft.phrasebook.logic.DBMgr;
+import com.jkfsoft.phrasebook.logic.db.DbOpenHelper;
+import com.jkfsoft.phrasebook.model.Card;
+import com.jkfsoft.phrasebook.model.Tag;
+import com.jkfsoft.phrasebook.utils.IThrRes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +40,16 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    //region global arrays/tables & variables
+    private static List<Card> mCards;
+    private static List<Tag> mTags;
+    private static DbOpenHelper mOpenHelper;
+    //endregion
+
     //region navigation
     private DrawerLayout mDrawerLayout;
     private static ViewPager mViewPager;
     //endregion
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = null;//!!!(NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
         if (navigationView != null) {
             setupDrawerContent(navigationView);
         }
@@ -69,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(v->{
             switch (mViewPager.getCurrentItem()){
-                case tabHome:
+                case INavConsts.tabHome:
                     startActivity(new Intent(this, EditCardActivity.class));
                     break;
-                case tabTags:
+                case INavConsts.tabTags:
                     startActivity(new Intent(this, EditTagActivity.class));
                     break;
                 default:
@@ -80,6 +93,22 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
+        //region app data init & load
+        mOpenHelper = DbOpenHelper.getInstance(this);
+
+        //load table tag
+        DBMgr.selectTagsThr(this, new IThrRes() {
+            @Override
+            public void onSuccess(Object result) {
+                //stop animation
+            }
+
+            @Override
+            public void onException(Exception e) {
+                showMess(MainActivity.this, e.getMessage());
+            }
+        });
+        //endregion
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -88,13 +117,13 @@ public class MainActivity extends AppCompatActivity {
             mDrawerLayout.closeDrawers();
             switch(i.getItemId()){
                 case R.id.mn_home:
-                    mViewPager.setCurrentItem(tabHome);
+                    mViewPager.setCurrentItem(INavConsts.tabHome);
                     break;
                 case R.id.mn_tags:
-                    mViewPager.setCurrentItem(tabTags);
+                    mViewPager.setCurrentItem(INavConsts.tabTags);
                     break;
                 case R.id.mn_learning:
-                    mViewPager.setCurrentItem(tabLearning);
+                    mViewPager.setCurrentItem(INavConsts.tabLearning);
                     break;
                 case R.id.mn_datatools:
                     startActivity(new Intent(this, DataToolsActivity.class));
@@ -108,18 +137,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public final int tabHome = 0;
-    public final int tabTags = 1;
-    public final int tabLearning = 2;
-
+    /**
+     * Configure navigation
+     *
+     * @param viewPager
+     */
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
-        adapter.addFragment(new FragmentHome(), "Home");
-        adapter.addFragment(new FragmentTags(), "Tags");
-        adapter.addFragment(new FragmentLearning(), "Learning");
+        adapter.addFragment(new FragmentHome(), getString(R.string.str_pager_home));
+        adapter.addFragment(new FragmentTags(), getString(R.string.str_pager_tags));
+        adapter.addFragment(new FragmentLearning(), getString(R.string.str_pager_learning));
         viewPager.setAdapter(adapter);
     }
 
+    /**
+     * Adapter-class for navigation
+     *
+     */
     static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
@@ -160,6 +194,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Optimization for Toast message
+     *
+     * @param context
+     * @param mess
+     */
     public static void showMess(Context context, String mess) {
         LayoutInflater inflater = ((Activity)context).getLayoutInflater();
         View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup)((Activity)context).findViewById(R.id.toast_layout_root));
@@ -170,8 +210,26 @@ public class MainActivity extends AppCompatActivity {
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
         toast.show();
+        Log.d(context.getString(R.string.toast_msg), mess);
     }
 
+    //region getter & setter
+    public static List<Card> getCards() {
+        return mCards;
+    }
 
+    public static List<Tag> getTags() {
+        return mTags;
+    }
+
+    public static void setTags(List<Tag> mTags) {
+        MainActivity.mTags = mTags;
+        if (FragmentTags.mTagsListViewAdaptor != null) FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
+    }
+
+    public static DbOpenHelper getmOpenHelper() {
+        return mOpenHelper;
+    }
+    //endregion
 
 }

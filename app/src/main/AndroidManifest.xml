@@ -11,18 +11,18 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".gui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DataToolsActivity" />
-        <activity android:name=".EditCardActivity" />
-        <activity android:name=".EditTagActivity" />
+        <activity android:name=".gui.DataToolsActivity" />
+        <activity android:name=".gui.EditCardActivity" />
+        <activity android:name=".gui.EditTagActivity" />
         <activity
-            android:name=".AboutActivity"
+            android:name=".gui.AboutActivity"
             android:label="@string/strAbout"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

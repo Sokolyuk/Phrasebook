@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">Phrasebook</string>
     <string name="strAbout">About</string>
+    <string name="toast_msg">"UI toast message"</string>
+    <string name="str_tag_deleted">"Tag '%s' deleted"</string>
+    <string name="str_tag_contextmenu_header">"Tag: '%s'"</string>
+    <string name="str_tag_contextmenu_edit">Edit tag</string>
+    <string name="str_tag_contextmenu_delete">Delete tag</string>
+    <string name="str_pager_home">Home</string>
+    <string name="str_pager_tags">Tags</string>
+    <string name="str_pager_learning">Learning</string>
 
 </resources>

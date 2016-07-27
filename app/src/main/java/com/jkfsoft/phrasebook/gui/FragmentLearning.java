@@ -1,4 +1,4 @@
-package com.jkfsoft.phrasebook;
+package com.jkfsoft.phrasebook.gui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,15 +7,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jkfsoft.phrasebook.R;
+
 /**
  * Created by Dmitry Sokolyuk on 26.07.2016.
  */
-public class FragmentHome extends Fragment {
+public class FragmentLearning extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragmant_home, container, false);
+        View view = inflater.inflate(R.layout.fragmant_learning, container, false);
 
         return view;
     }

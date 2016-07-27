@@ -1,14 +1,14 @@
 begin transaction;
 
---drop tables
-drop TABLE if exists `tag`;
-drop TABLE if exists `lang`;
-drop TABLE if exists `card_tag`;
-drop TABLE if exists `card_lang`;
-drop TABLE if exists `card`;
-
 --drop views
 drop view if exists vwu_card;
+
+--drop tables
+drop TABLE if exists `card_tag`;
+drop TABLE if exists `card_lang`;
+drop TABLE if exists `tag`;
+drop TABLE if exists `lang`;
+drop TABLE if exists `card`;
 
 --create tables
 CREATE TABLE `tag` (
@@ -19,6 +19,11 @@ CREATE TABLE `tag` (
 CREATE TABLE `lang` (
 	`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
 	`name`	TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE `card` (
+	`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
+	`learned` INTEGER default 0
 );
 
 CREATE TABLE `card_tag` (
@@ -38,15 +43,10 @@ CREATE TABLE `card_lang` (
 	FOREIGN KEY(lang_id) REFERENCES lang(id)
 );
 
-CREATE TABLE `card` (
-	`id`	INTEGER PRIMARY KEY AUTOINCREMENT,
-	`learned` INTEGER default 0
-);
 
 -- create views
---drop view vwu_card;
 
-create view vwu_card as select c.id as `id`, cl.lang_id as `land_id`, l.name as `lang_name`, cl.text as `text`, t.id as `tag_id`, t.name as `tag_name` from card c
+create view vwu_card as select c.id as `id`, cl.lang_id as `lang_id`, l.name as `lang_name`, cl.text as `text`, t.id as `tag_id`, t.name as `tag_name` from card c
 	left outer join card_tag ct on ct.card_id=c.id
 	left outer join tag t on t.id=ct.tag_id
 	left outer join card_lang cl on cl.card_id=c.id
@@ -89,6 +89,6 @@ insert into card_lang(card_id,lang_id,text)values(2,3,'Делу время, по
 insert into card_lang(card_id,lang_id,text)values(5,3,'test-123');
 
 commit;
-
-
+--rollback
+--PRAGMA foreign_keys = on;
 select * from vwu_card;
