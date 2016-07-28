@@ -185,9 +185,9 @@ public class FragmentHome extends Fragment {
 
             //data_root.removeAllViewsInLayout();
 
-//            for(CardText ct: c.getCardTexts()){
-//                addRowText(data_root, ct);
-//            }
+            for(CardText ct: c.getCardTexts()){
+                addRowText(data_root, ct);
+            }
 
             //((TextView)convertView.findViewById(R.id.listview_item_card_name)).setText(t.getName());
 
@@ -207,6 +207,10 @@ public class FragmentHome extends Fragment {
 
         protected void addRowText(ViewGroup data_root, CardText ct) {
             View v = layoutInflater.inflate(R.layout.listview_item_cars_data_row, null);
+
+            ((TextView)v.findViewById(R.id.card_data_row_lang_name)).setText(ct.getLang().getName());
+            ((TextView)v.findViewById(R.id.card_data_row_text)).setText(ct.getText());
+
             data_root.addView(v);
         }
     }
