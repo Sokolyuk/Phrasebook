@@ -28,8 +28,8 @@ import com.jkfsoft.phrasebook.R;
 import com.jkfsoft.phrasebook.logic.DBMgr;
 import com.jkfsoft.phrasebook.logic.db.DbOpenHelper;
 import com.jkfsoft.phrasebook.model.Card;
+import com.jkfsoft.phrasebook.model.Lang;
 import com.jkfsoft.phrasebook.model.Tag;
-import com.jkfsoft.phrasebook.utils.IThrRes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     //region global arrays/tables & variables
     private static List<Card> mCards;
     private static List<Tag> mTags;
+    private static List<Lang> mLangs;
     private static DbOpenHelper mOpenHelper;
     //endregion
 
@@ -60,30 +61,14 @@ public class MainActivity extends AppCompatActivity {
         mOpenHelper = DbOpenHelper.getInstance(this);
 
         //load table tag
-        DBMgr.selectTags( new IThrRes() {
-            @Override
-            public void onSuccess(Object result) {
-                //stop animation
-            }
-
-            @Override
-            public void onException(Exception e) {
-                showMess(MainActivity.this, e.getMessage());
-            }
-        });
+        DBMgr.selectTags(this);
 
         //load table tag
-        DBMgr.selectCards(new IThrRes() {
-            @Override
-            public void onSuccess(Object result) {
-                //stop animation
-            }
+        DBMgr.selectCards(this);
 
-            @Override
-            public void onException(Exception e) {
-                showMess(MainActivity.this, e.getMessage());
-            }
-        });
+        //load table lang
+        DBMgr.selectLangs(this);
+
         //endregion
 
 
@@ -123,6 +108,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
+
+        Intent intent = new Intent(this, EditCardTextActivity.class);
+        intent.putExtra(EditCardTextActivity.PARAM_TEXT, "text123");
+        intent.putExtra(EditCardTextActivity.PARAM_LANG_ID, 1);
+        startActivityForResult(intent, GUIConsts.ACTIVITY_REQUEST_CODE_EDIT_CARD_TEXT);
 
     }
 
@@ -233,6 +223,11 @@ public class MainActivity extends AppCompatActivity {
         return mCards;
     }
 
+    public static void setCards(List<Card> cards) {
+        MainActivity.mCards = cards;
+        if (FragmentHome.mCardsListViewAdaptor != null) FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
+    }
+
     public static List<Tag> getTags() {
         return mTags;
     }
@@ -242,9 +237,12 @@ public class MainActivity extends AppCompatActivity {
         if (FragmentTags.mTagsListViewAdaptor != null) FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
     }
 
-    public static void setCards(List<Card> cards) {
-        MainActivity.mCards = cards;
-        if (FragmentHome.mCardsListViewAdaptor != null) FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
+    public static List<Lang> getLangs() {
+        return mLangs;
+    }
+
+    public static void setLangs(List<Lang> mLangs) {
+        MainActivity.mLangs = mLangs;
     }
 
     public static DbOpenHelper getmOpenHelper() {

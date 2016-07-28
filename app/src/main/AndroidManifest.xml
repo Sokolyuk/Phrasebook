@@ -21,6 +21,7 @@
         <activity android:name=".gui.DataToolsActivity" />
         <activity android:name=".gui.EditCardActivity" />
         <activity android:name=".gui.EditTagActivity" />
+        <activity android:name=".gui.EditCardTextActivity" />
         <activity
             android:name=".gui.AboutActivity"
             android:label="@string/strAbout"

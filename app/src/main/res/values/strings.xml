@@ -12,5 +12,9 @@
     <string name="str_pager_home">Home</string>
     <string name="str_pager_tags">Tags</string>
     <string name="str_pager_learning">Learning</string>
+    <string name="editCardTextTextHint">Text</string>
+    <string name="editCardTextLangHint">Language</string>
+    <string name="err_field_is_empty">Field is empty</string>
+    <string name="err_incorrect_double_value">Incorrect double value</string>
 
 </resources>

@@ -1,10 +1,12 @@
 package com.jkfsoft.phrasebook.logic;
 
 import android.app.Activity;
+import android.content.Context;
+import android.support.annotation.Nullable;
 
-import com.jkfsoft.phrasebook.gui.EditCardActivity;
 import com.jkfsoft.phrasebook.gui.MainActivity;
 import com.jkfsoft.phrasebook.model.Card;
+import com.jkfsoft.phrasebook.model.Lang;
 import com.jkfsoft.phrasebook.model.Tag;
 import com.jkfsoft.phrasebook.utils.IThrRes;
 
@@ -15,14 +17,22 @@ import java.util.List;
  */
 public class DBMgr {
 
-    public static void selectTags(IThrRes i) {
+    public static void selectTags(Context context) {
+        selectTags(context, null);
+    }
+
+    public static void selectTags(Context context, IThrRes i) {
         try {
             final List<Tag> res = MainActivity.getmOpenHelper().selectTags();
             MainActivity.setTags(res);
             if (i != null) i.onSuccess(res);
         }catch(Exception e) {
             e.printStackTrace();
-            if (i != null) i.onException(e);
+            if (i != null) {
+                i.onException(e);
+            } else {
+                MainActivity.showMess(context, e.getMessage());
+            }
         }
     }
 
@@ -83,14 +93,23 @@ public class DBMgr {
         }).start();
     }
 
-    public static void selectCards(IThrRes i) {
+    public static void selectCards(Context context) {
+        selectCards(context, null);
+    }
+
+    public static void selectCards(Context context, IThrRes i) {
         try {
             final List<Card> res = MainActivity.getmOpenHelper().selectCards();
             MainActivity.setCards(res);
             if (i != null) i.onSuccess(res);
         }catch(Exception e) {
             e.printStackTrace();
-            if (i != null) i.onException(e);
+            if (i != null) {
+                i.onException(e);
+            } else {
+                MainActivity.showMess(context, e.getMessage());
+            }
+
         }
     }
 
@@ -149,6 +168,26 @@ public class DBMgr {
                 if (i != null) a.runOnUiThread(()->{i.onException(e);});
             }
         }).start();
+    }
+
+    public static void selectLangs(Context context) {
+        selectLangs(context, null);
+    }
+
+    public static void selectLangs(Context context, IThrRes i) {
+        try {
+            final List<Lang> res = MainActivity.getmOpenHelper().selectLangs();
+            MainActivity.setLangs(res);
+            if (i != null) i.onSuccess(res);
+        }catch(Exception e) {
+            e.printStackTrace();
+            if (i != null) {
+                i.onException(e);
+            } else {
+                MainActivity.showMess(context, e.getMessage());
+            }
+
+        }
     }
 
 }

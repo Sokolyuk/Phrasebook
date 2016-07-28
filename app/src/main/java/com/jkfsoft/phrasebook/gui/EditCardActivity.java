@@ -14,41 +14,46 @@ import com.jkfsoft.phrasebook.utils.IThrRes;
  */
 public class EditCardActivity extends AppCompatActivity {
 
+    //curren editing/new Card
+    public static Card mCurrentCard = null;
+
+    /**
+     * on Create
+     * @param savedInstanceState
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_card);
 
-        Card card = null;
-        Bundle b = getIntent().getExtras();
+        mCurrentCard = null;
 
+        //search selected Card by id if it edit action
+        Bundle b = getIntent().getExtras();
         if (b != null) {
             long id = b.getLong("id");
 
             for(Card _c: MainActivity.getCards()){
                 if (_c.getId() == id) {
-                    card = _c;
+                    mCurrentCard = _c;
                     break;
                 }
             }
-
-            if (card != null)
-                cardToControls(card);
         }
 
-        final Card lcard = card;
+        if (mCurrentCard == null)
+            mCurrentCard = new Card(); //it's new action
+
+        //load data
+        cardToControls(mCurrentCard);
 
         ((FloatingActionButton) findViewById(R.id.fab)).setOnClickListener(v->{
+            //save data from controls to class Card
+            controlsToCard(mCurrentCard);
 
-            if (lcard == null) {
+            if (mCurrentCard.getId() == null) {
                 //insert action
 
-                //new Card
-                Card tmpCard = new Card();
-
-                //save data from controls to class Card
-                controlsToCard(tmpCard);
-
-                DBMgr.insertCardThr(EditCardActivity.this, tmpCard, new IThrRes() {
+                DBMgr.insertCardThr(EditCardActivity.this, mCurrentCard, new IThrRes() {
                     @Override
                     public void onSuccess(Object result) {
                         FragmentHome.mCardsListViewAdaptor.notifyDataSetChanged();
@@ -63,11 +68,8 @@ public class EditCardActivity extends AppCompatActivity {
             } else {
                 //update action
 
-                //save data of controls to cars in MainActivity.mCards
-                controlsToCard(lcard);
-
                 //update in db & set to card status as saved
-                DBMgr.updateCardThr(EditCardActivity.this, lcard, new IThrRes() {
+                DBMgr.updateCardThr(EditCardActivity.this, mCurrentCard, new IThrRes() {
                     @Override
                     public void onSuccess(Object result) {
                         FragmentHome.mCardsListViewAdaptor.notifyDataSetChanged();
@@ -84,6 +86,13 @@ public class EditCardActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        //clean global variable
+        mCurrentCard = null;
+        super.onDestroy();
+    }
+
     protected void cardToControls(Card c) {
 
     }
@@ -92,6 +101,9 @@ public class EditCardActivity extends AppCompatActivity {
 
     }
 
+    public static Card getCurrentCard() {
+        return mCurrentCard;
+    }
 
 
 }
