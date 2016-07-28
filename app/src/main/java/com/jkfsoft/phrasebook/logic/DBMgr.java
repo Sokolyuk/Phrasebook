@@ -2,6 +2,7 @@ package com.jkfsoft.phrasebook.logic;
 
 import android.app.Activity;
 
+import com.jkfsoft.phrasebook.gui.EditCardActivity;
 import com.jkfsoft.phrasebook.gui.MainActivity;
 import com.jkfsoft.phrasebook.model.Card;
 import com.jkfsoft.phrasebook.model.Tag;
@@ -123,7 +124,7 @@ public class DBMgr {
         }).start();
     }
 
-    public static void updateTagThr(Activity a, Card c, IThrRes i) {
+    public static void updateCardThr(Activity a, Card c, IThrRes i) {
         new Thread(()->{
             try {
                 final int recaff = MainActivity.getmOpenHelper().updateCard(c);
@@ -149,6 +150,5 @@ public class DBMgr {
             }
         }).start();
     }
-
 
 }

@@ -19,6 +19,21 @@ public class Card extends ADataSaveControlledRow implements IDataSaveControlled 
     private List<Tag> tags = new ArrayList<>();
     private List<CardText> cardTexts = new ArrayList<>();
 
+    /**
+     * Constructor for new Card
+     */
+    public Card() {
+        this.id = null;
+        setRowAsInserted();//if it has id then it saved in db
+        this.learned = 0;
+    }
+
+    /**
+     * Constructor for load from db
+     *
+     * @param id
+     * @param learned
+     */
     public Card(Long id, int learned) {
         this.id = id;
         if (id != null) setRowAsSaved(); else setRowAsInserted();//if it has id then it saved in db

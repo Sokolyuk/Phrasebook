@@ -33,7 +33,6 @@ public class FragmentHome extends Fragment {
     public static ListView mCardsListView;
     //endregion
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -105,9 +104,7 @@ public class FragmentHome extends Fragment {
                         public void onSuccess(Object res) {
                             //deleting is done
                             mCardsListViewAdaptor.notifyDataSetChanged();
-                            mCardsListViewAdaptor.notifyDataSetInvalidated();
-                            int recaff = res == null?0:(Integer)res;
-                            MainActivity.showMess(getContext(), String.format("Card '%s' deleted. Recaff = '%s'", String.valueOf(c.getId()), String.valueOf(recaff)));
+                            MainActivity.showMess(getContext(), String.format("Card '%s' deleted. Recaff = '%s'", String.valueOf(c.getId()), String.valueOf(res == null?0:(Integer)res)));
                         }
                         @Override
                         public void onException(Exception e) {
@@ -138,17 +135,6 @@ public class FragmentHome extends Fragment {
             this.layoutInflater = LayoutInflater.from(context);
         }
 
-/*        @Override
-        public int getViewTypeCount() {
-            return getCount();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return position;
-        }
-*/
-
         @Override
         public int getCount() {
             if (MainActivity.getCards() == null) {
@@ -175,21 +161,22 @@ public class FragmentHome extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            //if (convertView == null) {
-                convertView = layoutInflater.inflate(R.layout.listview_item_card, parent, false);
-            //}
 
             Card c = (Card)getItem(position);
 
+            if (convertView == null) {
+                convertView = layoutInflater.inflate(R.layout.listview_item_card, parent, false);
+            }
+
+
+
             ViewGroup data_root = (ViewGroup)convertView.findViewById(R.id.listview_item_cars_data_root);
 
-            //data_root.removeAllViewsInLayout();
+            data_root.removeAllViews();
 
             for(CardText ct: c.getCardTexts()){
                 addRowText(data_root, ct);
             }
-
-            //((TextView)convertView.findViewById(R.id.listview_item_card_name)).setText(t.getName());
 
             convertView.setOnClickListener(v->{
                 Intent i = new Intent(getActivity(), EditCardActivity.class);

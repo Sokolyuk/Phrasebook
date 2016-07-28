@@ -92,9 +92,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL("insert into tag (`name`)values('888');\n");
         db.execSQL("insert into tag (`name`)values('999');\n");
         db.execSQL("insert into tag (`name`)values('100');\n");
-        db.execSQL("insert into tag (`name`)values('110');\n");
-        db.execSQL("insert into tag (`name`)values('120');\n");
-        db.execSQL("insert into tag (`name`)values('130');\n");
         /*db.execSQL("insert into tag (`name`)values('10Arbeit4');\n");
         db.execSQL("insert into tag (`name`)values('11Arbeit5');\n");
         db.execSQL("insert into tag (`name`)values('12Arbeit6');\n");
@@ -114,34 +111,50 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL("insert into card (learned)values(0);\n");
         db.execSQL("insert into card (learned)values(0);\n");
         db.execSQL("insert into card (learned)values(0);\n");
+        db.execSQL("insert into card (learned)values(0);\n");
+        db.execSQL("insert into card (learned)values(0);\n");
 
-        db.execSQL("insert into card_tag (card_id,tag_id)values(2,2);\n");
-        db.execSQL("insert into card_tag (card_id,tag_id)values(2,5);\n");
-        db.execSQL("insert into card_tag (card_id,tag_id)values(3,7);\n");
+        db.execSQL("insert into card_tag (card_id,tag_id)values(1,1);\n");
+        db.execSQL("insert into card_tag (card_id,tag_id)values(1,2);\n");
+        db.execSQL("insert into card_tag (card_id,tag_id)values(1,3);\n");
 
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,1,'All roads lead to Rome');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,2,'Alle Wege führen nach Rom');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,1,'11');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,2,'12');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,3,'13');\n");
 
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,3,'Все дороги ведут в Рим');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,1,'21');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,2,'22');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,3,'23');\n");
 
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,1,'Cause time fun hour');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,3,'Делу время, потехе час');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(3,1,'31');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(3,2,'32');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(3,3,'33');\n");
 
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(5,3,'test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(4,1,'41');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(4,2,'42');\n");
 
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,1,'61 test-123');");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,2,'62 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(5,1,'51');\n");
 
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(7,1,'71 test-123');");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(7,3,'73 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,1,'61');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,2,'62');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,3,'63');\n");
 
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(8,1,'81 test-123');");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(8,2,'82 test-123');");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(8,3,'83 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(7,1,'71');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(7,2,'72');\n");
 
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,1,'91 test-123');");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,2,'92 test-123');");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,3,'93 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(8,1,'81');\n");
+
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,1,'91');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,2,'92');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,3,'93');\n");
+
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(10,1,'10-1 -   3');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(10,2,'10-2 - 3');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(10,3,'10-3 - 3');\n");
+
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(11,1,'11 - 1 - 2');\n");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(11,2,'12 - 2 - 2');\n");
+
         //db.setForeignKeyConstraintsEnabled(true);
     }
 
@@ -149,7 +162,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     public synchronized void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         //stub !!! must redesigned
-
         db.execSQL("drop view if exists vwu_card;");
         db.execSQL("drop TABLE if exists `card_tag`;");
         db.execSQL("drop TABLE if exists `card_lang`;");
