@@ -11,7 +11,6 @@ import com.jkfsoft.phrasebook.model.CardText;
 import com.jkfsoft.phrasebook.model.Lang;
 import com.jkfsoft.phrasebook.model.Tag;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public synchronized void onCreate(SQLiteDatabase db) {
         //stub !!! must redesigned
         db.execSQL("CREATE TABLE `tag` (\n" +
                     "\t`id`\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
@@ -66,7 +65,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                     "\tFOREIGN KEY(card_id) REFERENCES card(id),\n" +
                     "\tFOREIGN KEY(lang_id) REFERENCES lang(id)\n" +
                     ");");
-        db.execSQL("create view vwu_card as select c.id as `id`, cl.lang_id as `lang_id`, l.name as `lang_name`, cl.text as `text`, t.id as `tag_id`, t.name as `tag_name` from card c\n" +
+        db.execSQL("create view vwu_card as select c.id as `id`, cl.lang_id as `lang_id`, l.name as `lang_name`, cl.text as `text`, t.id as `tag_id`, t.name as `tag_name`, c.learned from card c\n" +
                     "\tleft outer join card_tag ct on ct.card_id=c.id\n" +
                     "\tleft outer join tag t on t.id=ct.tag_id\n" +
                     "\tleft outer join card_lang cl on cl.card_id=c.id\n" +
@@ -111,7 +110,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public synchronized void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         //stub !!! must redesigned
 
@@ -125,7 +124,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public List<Lang> selectLangs() {
+    public synchronized List<Lang> selectLangs() {
         ArrayList<Lang> res = new ArrayList<>();
         try(
                 SQLiteDatabase d = getReadableDatabase();
@@ -142,7 +141,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public List<Tag> selectTags() {
+    public synchronized List<Tag> selectTags() {
         ArrayList<Tag> res = new ArrayList<>();
         try(
             SQLiteDatabase d = getReadableDatabase();
@@ -159,10 +158,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         return res;
     }
 
-    public synchronized long insertTag(Tag t) {
+    public synchronized long insertTag(Tag t) throws Exception {
         try(SQLiteDatabase db = getWritableDatabase();) {
+            Long tag_id = t.getId();
+            if (tag_id != null) throw new Exception(DbConsts.ERR_IDASSIGNED);
             ContentValues cv = new ContentValues();
-            cv.put(TblTags.COL_NAME_ID, t.getId());
             cv.put(TblTags.COL_NAME_NAME, t.getName());
             long _id = db.insert(TblTags.TBL_NAME, null, cv);
             t.setId(_id);
@@ -186,22 +186,22 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         }
     }
 
-    public List<Card> selectCards() {
+    public synchronized List<Card> selectCards() {
         ArrayList<Card> res = new ArrayList<>();
         try(
                 SQLiteDatabase d = getReadableDatabase();
-                Cursor cur = d.query(TblCards.TBL_NAME, null, null, null, null, null, null);
+                Cursor cur = d.query(VwuCards.VWU_NAME, null, null, null, null, null, null);
         ){
             if (cur != null) {
 
                 //region calling optimization
                 //optimize while. Only ones call getColumnIndex()
-                int i_col_id = cur.getColumnIndex(TblCards.COL_NAME_ID);
-                int i_col_text = cur.getColumnIndex(TblCards.COL_NAME_TEXT);
-                int i_col_lang_id = cur.getColumnIndex(TblCards.COL_NAME_LANG_ID);
-                int i_col_lang_name = cur.getColumnIndex(TblCards.COL_NAME_LANG_NAME);
-                int i_col_tag_id = cur.getColumnIndex(TblCards.COL_NAME_TAG_ID);
-                int i_col_tag_name = cur.getColumnIndex(TblCards.COL_NAME_TAG_NAME);
+                int i_col_id = cur.getColumnIndex(VwuCards.COL_NAME_ID);
+                int i_col_text = cur.getColumnIndex(VwuCards.COL_NAME_TEXT);
+                int i_col_lang_id = cur.getColumnIndex(VwuCards.COL_NAME_LANG_ID);
+                int i_col_lang_name = cur.getColumnIndex(VwuCards.COL_NAME_LANG_NAME);
+                int i_col_tag_id = cur.getColumnIndex(VwuCards.COL_NAME_TAG_ID);
+                int i_col_tag_name = cur.getColumnIndex(VwuCards.COL_NAME_TAG_NAME);
                 //endregion
 
                 //parsing cursor
@@ -245,6 +245,43 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         }
         return res;
     }
+
+
+
+    public synchronized long insertCard(Card c) throws Exception {
+        try(SQLiteDatabase db = getWritableDatabase();) {
+            Long card_id = c.getId();
+            if (card_id != null) throw new Exception(DbConsts.ERR_IDASSIGNED);
+
+
+
+
+            ContentValues cv = new ContentValues();
+            cv.put(VwuCards.COL_NAME_ID, card_id);
+            cv.put(TblTags.COL_NAME_NAME, t.getName());
+            long _id = db.insert(TblTags.TBL_NAME, null, cv);
+            t.setId(_id);
+            return _id;
+        }
+    }
+
+    public synchronized int updateTag(Tag t) throws Exception {
+        if (t == null || t.getId() == null || t.getId() < 1) throw new Exception(DbConsts.ERR_IDUNASSIGNED);
+        try(SQLiteDatabase db = getWritableDatabase();) {
+            ContentValues cv = new ContentValues();
+            cv.put(TblTags.COL_NAME_NAME, t.getName());
+            return db.update(TblTags.TBL_NAME, cv, String.format("%s=%s", TblTags.COL_NAME_ID, String.valueOf(t.getId())), null);
+        }
+    }
+
+    public synchronized int deleteTag(Tag t) throws Exception {
+        if (t == null || t.getId() == null || t.getId() < 1) throw new Exception(DbConsts.ERR_IDUNASSIGNED);
+        try(SQLiteDatabase db = getWritableDatabase();){
+            return db.delete(TblTags.TBL_NAME, String.format("%s=%s", TblTags.COL_NAME_ID, String.valueOf(t.getId())), null);
+        }
+    }
+
+
 
 
 

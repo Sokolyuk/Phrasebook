@@ -8,12 +8,14 @@ import java.util.List;
  */
 public class Card {
     private Long id;
+    private int learned;
 
     private List<Tag> tags = new ArrayList<>();
     private List<CardText> cardTexts = new ArrayList<>();
 
-    public Card(Long id) {
+    public Card(Long id, int learned) {
         this.id = id;
+        this.learned = learned;
     }
 
     public void tryAddCardText(long lang_id, IGetCardText getCardText) {
@@ -53,6 +55,22 @@ public class Card {
 
     public List<CardText> getCardTexts() {
         return cardTexts;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public int getLearned() {
+        return learned;
+    }
+
+    public void setLearned(int learned) {
+        this.learned = learned;
     }
 
     @Override

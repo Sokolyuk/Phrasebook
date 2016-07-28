@@ -3,17 +3,17 @@ package com.jkfsoft.phrasebook.logic.db;
 /**
  * Created by Alfa on 27.07.2016.
  */
-public class TblCards extends ATbl implements ITblCards {
+public class VwuCards extends ATbl implements IVwuCards {
 
     /**
      * Table name
      */
-    public static final String TBL_NAME = "vwu_card";
+    public static final String VWU_NAME = "vwu_card";
 
     /**
      * Private constructor
      */
-    private TblCards() {
+    private VwuCards() {
     }
 
 }

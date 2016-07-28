@@ -5,4 +5,5 @@ package com.jkfsoft.phrasebook.logic.db;
  */
 public interface DbConsts {
     String ERR_IDUNASSIGNED = "Id is unassigned";
+    String ERR_IDASSIGNED = "Id is assigned";
 }
