@@ -6,6 +6,9 @@
     <string name="str_tag_contextmenu_header">"Tag: '%s'"</string>
     <string name="str_tag_contextmenu_edit">Edit tag</string>
     <string name="str_tag_contextmenu_delete">Delete tag</string>
+    <string name="str_card_contextmenu_header">"Card: '%s'"</string>
+    <string name="str_card_contextmenu_edit">Edit card</string>
+    <string name="str_card_contextmenu_delete">Delete card</string>
     <string name="str_pager_home">Home</string>
     <string name="str_pager_tags">Tags</string>
     <string name="str_pager_learning">Learning</string>

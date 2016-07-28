@@ -73,7 +73,7 @@ public class FragmentTags extends Fragment {
      * @param item
      * @return
      */
-    protected Tag TagByMenuItem(MenuItem item) {
+    protected Tag tagByMenuItem(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         return (Tag) mTagsListView.getItemAtPosition(info.position);
     }
@@ -92,12 +92,12 @@ public class FragmentTags extends Fragment {
                 case IContextMenu.cmTagEdit:
                     //start EditTag activity for a selected tag in db
                     Intent i = new Intent(getActivity(), EditTagActivity.class);
-                    i.putExtra("id", TagByMenuItem(item).getId());
+                    i.putExtra("id", tagByMenuItem(item).getId());
                     startActivity(i);
                     break;
                 case IContextMenu.cmTagDelete:
                     //async request to delete selected tag from db
-                    Tag t = TagByMenuItem(item);
+                    Tag t = tagByMenuItem(item);
                     DBMgr.deleteTagThr(getActivity(), t, new IThrRes() {
                         @Override
                         public void onSuccess(Object res) {

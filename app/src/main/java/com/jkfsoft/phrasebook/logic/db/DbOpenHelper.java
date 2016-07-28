@@ -82,16 +82,33 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         db.execSQL("insert into `lang` (name)values('De');\n");
         db.execSQL("insert into `lang` (name)values('Ru');\n");
 
-        db.execSQL("insert into tag (`name`)values('Hochsprache');\n");
-        db.execSQL("insert into tag (`name`)values('Umgangsprach');\n");
+        db.execSQL("insert into tag (`name`)values('111');\n");
+        db.execSQL("insert into tag (`name`)values('222');\n");
+        db.execSQL("insert into tag (`name`)values('333');");
+        db.execSQL("insert into tag (`name`)values('444');");
+        db.execSQL("insert into tag (`name`)values('555');\n");
+        db.execSQL("insert into tag (`name`)values('666');");
+        db.execSQL("insert into tag (`name`)values('777');\n");
+        db.execSQL("insert into tag (`name`)values('888');\n");
+        db.execSQL("insert into tag (`name`)values('999');\n");
+        db.execSQL("insert into tag (`name`)values('100');\n");
+        db.execSQL("insert into tag (`name`)values('110');\n");
+        db.execSQL("insert into tag (`name`)values('120');\n");
+        db.execSQL("insert into tag (`name`)values('130');\n");
+        /*db.execSQL("insert into tag (`name`)values('10Arbeit4');\n");
+        db.execSQL("insert into tag (`name`)values('11Arbeit5');\n");
+        db.execSQL("insert into tag (`name`)values('12Arbeit6');\n");
+        db.execSQL("insert into tag (`name`)values('13Arbeit7');\n");
+        db.execSQL("insert into tag (`name`)values('14Arbeit8');\n");
+        db.execSQL("insert into tag (`name`)values('15Arbeit9');\n");
+        db.execSQL("insert into tag (`name`)values('16Arbeit10');\n");
+        db.execSQL("insert into tag (`name`)values('17Arbeit11');\n");
+        db.execSQL("insert into tag (`name`)values('18Arbeit12');\n");*/
 
-
-        db.execSQL("insert into tag (`name`)values('Geschäfte');");
-        db.execSQL("insert into tag (`name`)values('Offene Verkehr');");
-        db.execSQL("insert into tag (`name`)values('Hause');\n");
-        db.execSQL("insert into tag (`name`)values('Straße');");
-        db.execSQL("insert into tag (`name`)values('Arbeit');\n");
-
+        db.execSQL("insert into card (learned)values(0);\n");
+        db.execSQL("insert into card (learned)values(0);\n");
+        db.execSQL("insert into card (learned)values(0);\n");
+        db.execSQL("insert into card (learned)values(0);\n");
         db.execSQL("insert into card (learned)values(0);\n");
         db.execSQL("insert into card (learned)values(0);\n");
         db.execSQL("insert into card (learned)values(0);\n");
@@ -112,6 +129,19 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL("insert into card_lang(card_id,lang_id,text)values(5,3,'test-123');");
 
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,1,'61 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,2,'62 test-123');");
+
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(7,1,'71 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(7,3,'73 test-123');");
+
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(8,1,'81 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(8,2,'82 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(8,3,'83 test-123');");
+
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,1,'91 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,2,'92 test-123');");
+        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,3,'93 test-123');");
         //db.setForeignKeyConstraintsEnabled(true);
     }
 

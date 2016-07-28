@@ -56,6 +56,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //region app data init & load
+        mOpenHelper = DbOpenHelper.getInstance(this);
+
+        //load table tag
+        DBMgr.selectTags( new IThrRes() {
+            @Override
+            public void onSuccess(Object result) {
+                //stop animation
+            }
+
+            @Override
+            public void onException(Exception e) {
+                showMess(MainActivity.this, e.getMessage());
+            }
+        });
+
+        //load table tag
+        DBMgr.selectCards(new IThrRes() {
+            @Override
+            public void onSuccess(Object result) {
+                //stop animation
+            }
+
+            @Override
+            public void onException(Exception e) {
+                showMess(MainActivity.this, e.getMessage());
+            }
+        });
+        //endregion
+
+
         //region init navigation
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -93,22 +124,6 @@ public class MainActivity extends AppCompatActivity {
         });
         //endregion
 
-        //region app data init & load
-        mOpenHelper = DbOpenHelper.getInstance(this);
-
-        //load table tag
-        DBMgr.selectTagsThr(this, new IThrRes() {
-            @Override
-            public void onSuccess(Object result) {
-                //stop animation
-            }
-
-            @Override
-            public void onException(Exception e) {
-                showMess(MainActivity.this, e.getMessage());
-            }
-        });
-        //endregion
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -222,9 +237,14 @@ public class MainActivity extends AppCompatActivity {
         return mTags;
     }
 
-    public static void setTags(List<Tag> mTags) {
-        MainActivity.mTags = mTags;
+    public static void setTags(List<Tag> tags) {
+        MainActivity.mTags = tags;
         if (FragmentTags.mTagsListViewAdaptor != null) FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
+    }
+
+    public static void setCards(List<Card> cards) {
+        MainActivity.mCards = cards;
+        if (FragmentHome.mCardsListViewAdaptor != null) FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
     }
 
     public static DbOpenHelper getmOpenHelper() {

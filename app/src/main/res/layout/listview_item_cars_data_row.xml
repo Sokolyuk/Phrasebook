@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:text="Ru"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_margin="0dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Kakoy-to text  24352 3542 354 23 45 3  2356 34 563456    ertyerty ertye rty 4363546 e tryetr y4643"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_margin="0dp" />
+
+</LinearLayout>

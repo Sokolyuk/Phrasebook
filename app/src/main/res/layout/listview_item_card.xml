@@ -9,11 +9,18 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/listview_item_cars_data_root"
         android:weightSum="1">
+
+<!-- dynamicly in code
+    see FragmentHome.getView
+-->
+
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="horizontal"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -22,64 +29,36 @@
                 android:layout_height="wrap_content"
                 android:text="Ru"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="10dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Kakoy-to text  24352 3542 354 23 45 3  2356 34 563456    ertyerty ertye rty 4363546 e tryetr y4643"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="10dp" />
+                android:textSize="16sp" />
 
-        </LinearLayout>
+        </LinearLayout><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:text="Ru"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:text="Kakoy-to text  24352 3542 354 23 45 3  2356 34 563456    ertyerty ertye rty 4363546 e tryetr y4643"
+            android:textStyle="bold"
+            android:textSize="16sp" />
 
-            <TextView
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:text="En"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="10dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Some text 346345 63463 546 3456  try er y 3456 345 63 546 3 yer ty 345 634 5y ert yer y3 546 "
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="10dp" />
-
-        </LinearLayout>
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="30dp"
-                android:layout_height="wrap_content"
-                android:text="De"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="10dp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Etwas text ertye tyerty etyertyerhdfgh345y dfhgdfghe4 53543456354tr trert 363456 etrher 346345yerthertyerty345"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_margin="5dp" />
-
-        </LinearLayout>
+    </LinearLayout>
 
 
     </LinearLayout>
