@@ -46,7 +46,7 @@ CREATE TABLE `card_lang` (
 
 -- create views
 
-create view vwu_card as select c.id as `id`, cl.lang_id as `lang_id`, l.name as `lang_name`, cl.text as `text`, t.id as `tag_id`, t.name as `tag_name` from card c
+create view vwu_card as select c.id as `id`, cl.lang_id as `lang_id`, l.name as `lang_name`, cl.text as `text`, t.id as `tag_id`, t.name as `tag_name`, c.learning from card c
 	left outer join card_tag ct on ct.card_id=c.id
 	left outer join tag t on t.id=ct.tag_id
 	left outer join card_lang cl on cl.card_id=c.id

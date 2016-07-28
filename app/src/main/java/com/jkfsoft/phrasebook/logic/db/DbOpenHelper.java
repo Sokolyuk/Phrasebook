@@ -6,6 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.jkfsoft.phrasebook.logic.db.structure.TblCard_tag;
+import com.jkfsoft.phrasebook.logic.db.structure.TblCard_lang;
+import com.jkfsoft.phrasebook.logic.db.structure.TblCards;
+import com.jkfsoft.phrasebook.logic.db.structure.TblLangs;
+import com.jkfsoft.phrasebook.logic.db.structure.TblTags;
+import com.jkfsoft.phrasebook.logic.db.structure.VwuCards;
 import com.jkfsoft.phrasebook.model.Card;
 import com.jkfsoft.phrasebook.model.CardText;
 import com.jkfsoft.phrasebook.model.Lang;
@@ -144,8 +150,8 @@ public class DbOpenHelper extends SQLiteOpenHelper {
     public synchronized List<Tag> selectTags() {
         ArrayList<Tag> res = new ArrayList<>();
         try(
-            SQLiteDatabase d = getReadableDatabase();
-            Cursor cur = d.query(TblTags.TBL_NAME, null, null, null, null, null, null);
+                SQLiteDatabase d = getReadableDatabase();
+                Cursor cur = d.query(TblTags.TBL_NAME, null, null, null, null, null, null);
         ){
             if (cur != null) {
                 while(cur.moveToNext()){
@@ -197,6 +203,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                 //region calling optimization
                 //optimize while. Only ones call getColumnIndex()
                 int i_col_id = cur.getColumnIndex(VwuCards.COL_NAME_ID);
+                int i_col_learned = cur.getColumnIndex(VwuCards.COL_NAME_LEARNED);
                 int i_col_text = cur.getColumnIndex(VwuCards.COL_NAME_TEXT);
                 int i_col_lang_id = cur.getColumnIndex(VwuCards.COL_NAME_LANG_ID);
                 int i_col_lang_name = cur.getColumnIndex(VwuCards.COL_NAME_LANG_NAME);
@@ -209,10 +216,11 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                 Card card = null;
                 while(cur.moveToNext()){
                     long id = cur.getLong(i_col_id);
+                    int card_learned = cur.getInt(i_col_learned);
 
                     //resultset is multiple rows, because in select used join
                     if (id != id_prev) {
-                        card = new Card(id);
+                        card = new Card(id, card_learned);
                     }
 
                     //Add CardText
@@ -221,7 +229,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                         //try add new CardText by id
                         card.tryAddCardText(lang_id, ()->{
                             //if id not found then callback
-                            return new CardText(cur.getString(i_col_text), lang_id, cur.getString(i_col_lang_name));
+                            return new CardText(false, cur.getString(i_col_text), lang_id, cur.getString(i_col_lang_name));
                         });
                     }
 
@@ -246,38 +254,160 @@ public class DbOpenHelper extends SQLiteOpenHelper {
         return res;
     }
 
-
-
     public synchronized long insertCard(Card c) throws Exception {
         try(SQLiteDatabase db = getWritableDatabase();) {
+            if (c == null) throw new Exception(DbConsts.ERR_STATEMENTCARDNOTASSIGNED);
             Long card_id = c.getId();
             if (card_id != null) throw new Exception(DbConsts.ERR_IDASSIGNED);
 
+            //open transaction
+            db.beginTransaction();
+            try{
+                //insert into table card
+                ContentValues card_cv = new ContentValues();
+                card_cv.put(TblCards.COL_NAME_LEARNED, c.getLearned());
+                card_id = db.insert(TblCards.TBL_NAME, null, card_cv);
 
+                //insert card's tags into card_tag by id
+                for(Tag t: c.getTags()) {
+                    ContentValues card_tag_cv = new ContentValues();
+                    card_tag_cv.put(TblCard_tag.COL_NAME_CARD_ID, card_id);
+                    card_tag_cv.put(TblCard_tag.COL_NAME_TAG_ID, t.getId());
+                    card_id = db.insert(TblCards.TBL_NAME, null, card_tag_cv);
+                }
 
+                //insert card's texts into card_lang by id
+                for(CardText ct: c.getCardTexts()) {
+                    ContentValues card_lang_cv = new ContentValues();
+                    card_lang_cv.put(TblCard_lang.COL_NAME_CARD_ID, card_id);
+                    card_lang_cv.put(TblCard_lang.COL_NAME_LANG_ID, ct.getLang().getId());
+                    card_id = db.insert(TblCard_lang.TBL_NAME, null, card_lang_cv);
+                }
 
-            ContentValues cv = new ContentValues();
-            cv.put(VwuCards.COL_NAME_ID, card_id);
-            cv.put(TblTags.COL_NAME_NAME, t.getName());
-            long _id = db.insert(TblTags.TBL_NAME, null, cv);
-            t.setId(_id);
-            return _id;
+                //commit
+                db.setTransactionSuccessful();
+
+                //set new id to new Card
+                c.setId(card_id);
+
+                return card_id;
+            }finally{
+                //end of transaction. Without setTransactionSuccessful it do rollback. Android's Spezialitaet.
+                db.endTransaction();
+            }
         }
     }
 
-    public synchronized int updateTag(Tag t) throws Exception {
-        if (t == null || t.getId() == null || t.getId() < 1) throw new Exception(DbConsts.ERR_IDUNASSIGNED);
+    public synchronized int updateCard(Card c) throws Exception {
+        if (c == null || c.getId() == null || c.getId() < 1) throw new Exception(DbConsts.ERR_IDUNASSIGNED);
+
+        if (!c.isModified()) return 0;
+
         try(SQLiteDatabase db = getWritableDatabase();) {
-            ContentValues cv = new ContentValues();
-            cv.put(TblTags.COL_NAME_NAME, t.getName());
-            return db.update(TblTags.TBL_NAME, cv, String.format("%s=%s", TblTags.COL_NAME_ID, String.valueOf(t.getId())), null);
+
+            long card_id = c.getId();
+            int recaff = 0;
+
+            //open transaction
+            db.beginTransaction();
+            try{
+                if (c.isModifiedChildData()) {
+                    //update card_tag
+                    for(Tag t: c.getTags()) {
+                        if (t.isInsertedRow()) {
+                            //insert sub tag
+
+                            ContentValues card_tag_cv = new ContentValues();
+                            card_tag_cv.put(TblCard_tag.COL_NAME_CARD_ID, card_id);
+                            card_tag_cv.put(TblCard_tag.COL_NAME_TAG_ID, t.getId());
+                            db.insert(TblCard_tag.TBL_NAME, null, card_tag_cv);
+                            recaff++;
+                        } else if (t.isUpdatedRow()) {
+                            //update sub tag
+
+                            //must never here be, in this configuration
+                            //..
+                            if (t.getId() == null || t.getId() < 1) throw new Exception(DbConsts.ERR_IDUNASSIGNED);
+
+                            ContentValues card_tag_cv = new ContentValues();
+                            card_tag_cv.put(TblCard_tag.COL_NAME_TAG_ID, t.getId());
+                            recaff += db.update(TblCard_tag.TBL_NAME, card_tag_cv, String.format("%s=%s", TblCard_tag.COL_NAME_CARD_ID, String.valueOf(card_id)), null);
+                        } else if (t.isDeletedRow()) {
+                            //delete sub tag
+                            recaff += db.delete(TblCard_tag.TBL_NAME, String.format("%s=%s and %s=%s", TblCard_tag.COL_NAME_CARD_ID, String.valueOf(card_id), TblCard_tag.COL_NAME_TAG_ID, String.valueOf(t.getId())), null);
+                        }
+                        t.setRowAsSaved();
+                    }
+
+                    //update card_lang
+                    for(CardText ct: c.getCardTexts()) {
+                        if (ct.isInsertedRow()) {
+                            ContentValues card_lang_cv = new ContentValues();
+                            card_lang_cv.put(TblCard_lang.COL_NAME_CARD_ID, card_id);
+                            card_lang_cv.put(TblCard_lang.COL_NAME_LANG_ID, ct.getLang().getId());
+                            db.insert(TblCard_lang.TBL_NAME, null, card_lang_cv);
+                            recaff++;
+                        } else if (ct.isUpdatedRow()) {
+                            ContentValues card_lang_cv = new ContentValues();
+                            card_lang_cv.put(TblCard_lang.COL_NAME_LANG_ID, ct.getLang().getId());
+                            card_lang_cv.put(TblCard_lang.COL_NAME_TEXT, ct.getText());
+                            recaff += db.update(TblCard_lang.TBL_NAME, card_lang_cv, String.format("%s=%s", TblCard_lang.COL_NAME_CARD_ID, String.valueOf(card_id)), null);
+                        } else if (ct.isDeletedRow()) {
+                            recaff += db.delete(TblCard_lang.TBL_NAME, String.format("%s=%s and %s=%s", TblCard_lang.COL_NAME_CARD_ID, String.valueOf(card_id), TblCard_lang.COL_NAME_LANG_ID, String.valueOf(ct.getLang().getId())), null);
+                        }
+                        ct.setRowAsSaved();
+                    }
+                }
+
+                //update card
+                if (c.isModifiedRow()) {
+                    ContentValues card_cv = new ContentValues();
+                    card_cv.put(TblCards.COL_NAME_LEARNED, c.getLearned());
+                    recaff += db.update(TblCards.TBL_NAME, card_cv, String.format("%s=%s", TblCards.COL_NAME_ID, String.valueOf(card_id)), null);
+                    c.setRowAsSaved();
+                }
+
+                //commit
+                db.setTransactionSuccessful();
+
+                //count of records affected. Used for extra controll of actions
+                return recaff;
+            }finally{
+                //end of transaction. Without setTransactionSuccessful it do rollback. Android's Spezialitaet.
+                db.endTransaction();
+            }
+
         }
     }
 
-    public synchronized int deleteTag(Tag t) throws Exception {
-        if (t == null || t.getId() == null || t.getId() < 1) throw new Exception(DbConsts.ERR_IDUNASSIGNED);
+    public synchronized int deleteCard(Card c) throws Exception {
+        if (c == null || c.getId() == null || c.getId() < 1) throw new Exception(DbConsts.ERR_IDUNASSIGNED);
         try(SQLiteDatabase db = getWritableDatabase();){
-            return db.delete(TblTags.TBL_NAME, String.format("%s=%s", TblTags.COL_NAME_ID, String.valueOf(t.getId())), null);
+
+            long card_id = c.getId();
+            int recaff = 0;
+
+            //open transaction
+            db.beginTransaction();
+            try{
+                //delete from card_tag where card_id = ?
+                recaff += db.delete(TblCard_tag.TBL_NAME, String.format("%s=%s", TblCard_tag.COL_NAME_CARD_ID, String.valueOf(card_id)), null);
+
+                //delete from card_lang where card_id = ?
+                recaff += db.delete(TblCard_lang.TBL_NAME, String.format("%s=%s", TblCard_lang.COL_NAME_CARD_ID, String.valueOf(card_id)), null);
+
+                //delete from card where id = ?
+                recaff += db.delete(TblCards.TBL_NAME, String.format("%s=%s", TblCards.COL_NAME_ID, String.valueOf(card_id)), null);
+
+                //commit
+                db.setTransactionSuccessful();
+
+                //count of records affected. Used for extra controll of actions
+                return recaff;
+            }finally{
+                //end of transaction. Without setTransactionSuccessful it do rollback. Android's Spezialitaet.
+                db.endTransaction();
+            }
         }
     }
 

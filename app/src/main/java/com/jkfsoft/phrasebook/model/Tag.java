@@ -3,12 +3,13 @@ package com.jkfsoft.phrasebook.model;
 /**
  * Created by Dmitry Sokolyuk on 27.07.2016.
  */
-public class Tag {
+public class Tag extends ADataSaveControlledRow {
     private Long id;
     private String name;
 
     public Tag(Long id, String name) {
         this.id = id;
+        if (id != null) setRowAsSaved(); else setRowAsInserted();
         this.name = name;
     }
 
@@ -18,6 +19,7 @@ public class Tag {
 
     public void setId(Long id) {
         this.id = id;
+        if (id != null) setRowAsSaved(); else setRowAsInserted();
     }
 
     public String getName() {
@@ -26,6 +28,7 @@ public class Tag {
 
     public void setName(String name) {
         this.name = name;
+        setRowAsUpdated();
     }
 
     @Override
