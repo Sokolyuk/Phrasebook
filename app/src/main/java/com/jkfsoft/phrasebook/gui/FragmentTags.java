@@ -91,9 +91,7 @@ public class FragmentTags extends Fragment {
             switch (item.getOrder()){
                 case IContextMenu.cmTagEdit:
                     //start EditTag activity for a selected tag in db
-                    Intent i = new Intent(getActivity(), EditTagActivity.class);
-                    i.putExtra("id", tagByMenuItem(item).getId());
-                    startActivity(i);
+                    startActivityEditTag(tagByMenuItem(item));
                     break;
                 case IContextMenu.cmTagDelete:
                     //async request to delete selected tag from db
@@ -168,9 +166,7 @@ public class FragmentTags extends Fragment {
             ((TextView)convertView.findViewById(R.id.listview_item_tag_name)).setText(t.getName());
 
             convertView.setOnClickListener(v->{
-                Intent i = new Intent(getActivity(), EditTagActivity.class);
-                i.putExtra("id", t.getId());
-                startActivity(i);
+                startActivityEditTag(t);
             });
 
             convertView.setOnLongClickListener(v->{
@@ -180,6 +176,17 @@ public class FragmentTags extends Fragment {
 
             return convertView;
         }
+
+    }
+
+    private void startActivityEditTag(Tag t) {
+        Intent intent = new Intent(getActivity(), EditTagActivity.class);
+        if (t != null) {
+            intent.putExtra(EditTagActivity.PARAM_NAME, t.getName());
+            intent.putExtra(EditTagActivity.PARAM_ID, t.getId());
+        }
+        getActivity().startActivityForResult(intent, GUIConsts.ACTIVITY_REQUEST_CODE_EDIT_TAG);
+
     }
 
 }

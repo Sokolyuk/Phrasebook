@@ -231,7 +231,7 @@ public class EditCardActivity extends AppCompatActivity {
             }
 
             ((TextView)convertView.findViewById(R.id.card_data_row_lang_name)).setText(ct.getLang().getName());
-            ((TextView)convertView.findViewById(R.id.card_data_row_text)).setText(ct.getText() + " :: " + ct.getDataSaveControlledRowAsString());
+            ((TextView)convertView.findViewById(R.id.card_data_row_text)).setText(ct.getText());
 
             convertView.setOnClickListener(v->{
                 Intent intent = new Intent(EditCardActivity.this, EditCardTextActivity.class);

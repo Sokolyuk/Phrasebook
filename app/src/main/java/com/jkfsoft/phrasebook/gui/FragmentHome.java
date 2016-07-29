@@ -193,7 +193,7 @@ public class FragmentHome extends Fragment {
             View v = layoutInflater.inflate(R.layout.listview_item_cars_data_row, null);
 
             ((TextView)v.findViewById(R.id.card_data_row_lang_name)).setText(ct.getLang().getName());
-            ((TextView)v.findViewById(R.id.card_data_row_text)).setText(ct.getText() + " :: " + ct.getDataSaveControlledRowAsString());
+            ((TextView)v.findViewById(R.id.card_data_row_text)).setText(ct.getText());
 
             data_root.addView(v);
         }

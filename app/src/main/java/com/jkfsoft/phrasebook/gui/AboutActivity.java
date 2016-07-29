@@ -1,16 +1,9 @@
 package com.jkfsoft.phrasebook.gui;
 
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Button;
-
 import com.jkfsoft.phrasebook.R;
-import com.jkfsoft.phrasebook.Service.FileService;
 import com.jkfsoft.phrasebook.logic.listener.AboutActivityOnClickListener;
 
 /**

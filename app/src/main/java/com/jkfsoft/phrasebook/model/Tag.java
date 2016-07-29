@@ -39,6 +39,11 @@ public class Tag extends ADataSaveControlledRow {
                 '}';
     }
 
+    /**
+     * Export row to sd card
+     *
+     * @return
+     */
     public String toCSVExport() {
         return String.format("%s%s%s\n", name, IModelConsts.SPLIT, String.valueOf(id));
     }

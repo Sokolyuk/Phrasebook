@@ -73,7 +73,13 @@ public class DBMgr {
                 if (i != null) a.runOnUiThread(()->{i.onSuccess(recaff);});
             }catch(Exception e) {
                 e.printStackTrace();
-                if (i != null) a.runOnUiThread(()->{i.onException(e);});
+                a.runOnUiThread(()->{
+                    if (i != null) {
+                        i.onException(e);
+                    } else {
+                        MainActivity.showMess(a, e.getMessage());
+                    }
+                });
             }
         }).start();
     }
@@ -109,7 +115,6 @@ public class DBMgr {
             } else {
                 MainActivity.showMess(context, e.getMessage());
             }
-
         }
     }
 

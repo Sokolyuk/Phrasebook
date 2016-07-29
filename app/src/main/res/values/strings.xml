@@ -21,6 +21,7 @@
     <string name="str_export_to_sdcard_is_ok">Export to SD card is Ok.</string>
     <string name="err_cant_mkdirs">Can not create path to SD card</string>
     <string name="str_export_file_name">export.csv</string>
+    <string name="editTagNameTextHint">Tag name</string>
 
 
     <string-array name="db_script_create">

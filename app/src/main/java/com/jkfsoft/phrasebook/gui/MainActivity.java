@@ -30,6 +30,7 @@ import com.jkfsoft.phrasebook.logic.db.DbOpenHelper;
 import com.jkfsoft.phrasebook.model.Card;
 import com.jkfsoft.phrasebook.model.Lang;
 import com.jkfsoft.phrasebook.model.Tag;
+import com.jkfsoft.phrasebook.utils.IThrRes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(this, EditCardActivity.class));
                     break;
                 case INavConsts.tabTags:
-                    startActivity(new Intent(this, EditTagActivity.class));
+                    startActivityForResult(new Intent(this, EditTagActivity.class), GUIConsts.ACTIVITY_REQUEST_CODE_EDIT_TAG);
                     break;
                 default:
             }
@@ -222,6 +223,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d(context.getString(R.string.toast_msg), mess);
     }
 
+    public void showMess(String mess) {
+        showMess(this, mess);
+    }
+
+
     //region getter & setter
     public static List<Card> getCards() {
         return mCards;
@@ -257,6 +263,49 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case GUIConsts.ACTIVITY_REQUEST_CODE_EDIT_TAG:
+                if (resultCode == RESULT_OK) {
+                    if(data != null && data.getExtras() != null) {
+                        long tag_id = data.getExtras().getLong(EditTagActivity.PARAM_ID);
+                        String tag_name = data.getExtras().getString(EditTagActivity.PARAM_NAME);
+
+                        if (tag_id < 0) {
+                            //insert
+                            DBMgr.insertTagThr(this, new Tag(null, tag_name), null);
+                        } else {
+                            //update
+                            for(Tag t: MainActivity.getTags()){
+                                if(t.getId() == tag_id) {
+
+                                    DBMgr.updateTagThr(this, t, new IThrRes() {
+                                        @Override
+                                        public void onSuccess(Object result) {
+                                            t.setName(tag_name);
+                                        }
+
+                                        @Override
+                                        public void onException(Exception e) {
+                                            MainActivity.this.showMess(e.getMessage());
+                                        }
+                                    });
+                                    break;
+                                }
+                            }
+
+                        }
+
+                        FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
+                    }
+                }
+                break;
+            default:
+        }
+
     }
+
+
 }
