@@ -34,28 +34,5 @@ public class FileService extends Service {
         return new FileServiceBinder();
     }
 
-    public void doExportTagsToSDCard(List<Tag> tags) {
-        try{
-            String state = Environment.getExternalStorageState();
-
-            if(state.equals(Environment.MEDIA_MOUNTED)) {
-                File fileExternal = Environment.getExternalStorageDirectory();
-                String path = fileExternal.getAbsolutePath() + File.separator + getString(R.string.app_name) + File.separator;
-                File dir = new File(path);
-                if (!dir.mkdirs()) throw new Exception(getString(R.string.err_cant_mkdirs));
-                File f = new File(dir, getString(R.string.str_export_file_name));
-                try(FileOutputStream fos = new FileOutputStream(f);
-                    OutputStreamWriter osw = new OutputStreamWriter(fos);){
-                    for(Tag t: tags){
-                        osw.write(t.toCSVExport());
-                    }
-                }
-            }
-
-        }catch(Exception e){
-            Log.e(this.getClass().getSimpleName(), e.getMessage());
-        }
-
-    }
 
 }

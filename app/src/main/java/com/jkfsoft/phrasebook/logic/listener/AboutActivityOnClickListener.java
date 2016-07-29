@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,12 @@ import com.jkfsoft.phrasebook.gui.FragmentHome;
 import com.jkfsoft.phrasebook.gui.FragmentTags;
 import com.jkfsoft.phrasebook.gui.MainActivity;
 import com.jkfsoft.phrasebook.logic.db.DbOpenHelper;
+import com.jkfsoft.phrasebook.model.Tag;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.List;
 
 /**
  * Created by Dmitry Sokolyuk on 28.07.2016.
@@ -82,13 +89,7 @@ public class AboutActivityOnClickListener implements View.OnClickListener {
                     //ask permission to sd-card
                     this.activity.requestPermissions(new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
                 } else {
-
-                    if (((AboutActivity)activity).getFileService() == null) {
-                        Log.e("!!!!!!!!!!", "getFileService() == null");
-                    }
-
-                    ((AboutActivity)activity).getFileService().doExportTagsToSDCard(MainActivity.getTags());
-                    MainActivity.showMess(activity, activity.getString(R.string.str_export_to_sdcard_is_ok));
+                    doExportTagsToSDCard(MainActivity.getTags());
                 }
 
                 break;
@@ -96,4 +97,34 @@ public class AboutActivityOnClickListener implements View.OnClickListener {
 
         }
     }
+
+    protected void doExportTagsToSDCard(List<Tag> tags) {
+        try{
+            String state = Environment.getExternalStorageState();
+
+            if(state.equals(Environment.MEDIA_MOUNTED)) {
+                File fileExternal = Environment.getExternalStorageDirectory();
+                String path = fileExternal.getAbsolutePath() + File.separator + activity.getString(R.string.app_name) + File.separator;
+                File dir = new File(path);
+                //if (!
+                        dir.mkdirs();
+                //) throw new Exception(activity.getString(R.string.err_cant_mkdirs));
+                File f = new File(dir, activity.getString(R.string.str_export_file_name));
+                try(FileOutputStream fos = new FileOutputStream(f);
+                    OutputStreamWriter osw = new OutputStreamWriter(fos);){
+                    for(Tag t: tags){
+                        osw.write(t.toCSVExport());
+                    }
+                }
+                MainActivity.showMess(activity, activity.getString(R.string.str_export_to_sdcard_is_ok) + "\n" + path + activity.getString(R.string.str_export_file_name));
+            }
+
+        }catch(Exception e){
+            Log.e(this.getClass().getSimpleName(), e.getMessage());
+            MainActivity.showMess(activity, e.getMessage() );
+        }
+
+    }
+
+
 }
