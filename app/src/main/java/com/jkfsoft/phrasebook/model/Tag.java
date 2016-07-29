@@ -38,4 +38,8 @@ public class Tag extends ADataSaveControlledRow {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+    public String toCSVExport() {
+        return String.format("%s%s%s\n", name, IModelConsts.SPLIT, String.valueOf(id));
+    }
 }

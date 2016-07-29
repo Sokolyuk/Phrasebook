@@ -17,6 +17,11 @@
     <string name="err_field_is_empty">Field is empty</string>
     <string name="err_incorrect_double_value">Incorrect double value</string>
     <string name="err_dublicate_language">Dublicate language</string>
+    <string name="str_tel_support">tel:123456789</string>
+    <string name="str_export_to_sdcard_is_ok">Export to SD card is Ok.</string>
+    <string name="err_cant_mkdirs">Can not create path to SD card</string>
+    <string name="str_export_file_name">export.csv</string>
+
 
     <string-array name="db_script_create">
         <item>"CREATE TABLE `tag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL UNIQUE);"</item>
@@ -56,6 +61,7 @@
         <item>"drop TABLE if exists `tag`;"</item>
         <item>"drop TABLE if exists `lang`;"</item>
         <item>"drop TABLE if exists `card`;"</item>
+        <item>"drop view if exists `vwu_card`;"</item>
     </string-array>
 
 

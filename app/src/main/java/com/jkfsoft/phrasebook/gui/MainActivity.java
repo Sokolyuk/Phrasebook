@@ -65,14 +65,7 @@ public class MainActivity extends AppCompatActivity {
         //region app data init & load
         mOpenHelper = DbOpenHelper.getInstance(this);
 
-        //load table tag
-        DBMgr.selectTags(this);
-
-        //load table tag
-        DBMgr.selectCards(this);
-
-        //load table lang
-        DBMgr.selectLangs(this);
+        reLoadTables(this);
 
         //endregion
 
@@ -113,6 +106,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
+    }
+
+    public static void reLoadTables(Context context) {
+        //load table tag
+        DBMgr.selectTags(context);
+
+        //load table tag
+        DBMgr.selectCards(context);
+
+        //load table lang
+        DBMgr.selectLangs(context);
+
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
