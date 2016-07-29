@@ -272,10 +272,19 @@ public class MainActivity extends AppCompatActivity {
                     if(data != null && data.getExtras() != null) {
                         long tag_id = data.getExtras().getLong(EditTagActivity.PARAM_ID);
                         String tag_name = data.getExtras().getString(EditTagActivity.PARAM_NAME);
-
-                        if (tag_id < 0) {
+                        if (tag_id < 1) {
                             //insert
-                            DBMgr.insertTagThr(this, new Tag(null, tag_name), null);
+                            DBMgr.insertTagThr(this, new Tag(null, tag_name), new IThrRes() {
+                                @Override
+                                public void onSuccess(Object result) {
+                                    FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
+                                }
+
+                                @Override
+                                public void onException(Exception e) {
+                                    showMess(e.getMessage());
+                                }
+                            });
                         } else {
                             //update
                             for(Tag t: MainActivity.getTags()){
@@ -285,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Object result) {
                                             t.setName(tag_name);
+                                            FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
                                         }
 
                                         @Override
@@ -297,8 +307,6 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                         }
-
-                        FragmentTags.mTagsListViewAdaptor.notifyDataSetChanged();
                     }
                 }
                 break;

@@ -7,8 +7,14 @@
     <string name="str_tag_contextmenu_edit">Edit tag</string>
     <string name="str_tag_contextmenu_delete">Delete tag</string>
     <string name="str_card_contextmenu_header">"Card: '%s'"</string>
+    <string name="str_card_contextmenu_cardtext_header">"Text of card: '%s'"</string>
     <string name="str_card_contextmenu_edit">Edit card</string>
+    <string name="str_card_contextmenu_cardtag_add">Add new tag of card</string>
+    <string name="str_card_contextmenu_cardtext_add">Add a new text</string>
+    <string name="str_card_contextmenu_cardtext_edit">Edit</string>
     <string name="str_card_contextmenu_delete">Delete card</string>
+    <string name="str_card_contextmenu_cardtag_drop">"Drop tag of card '%s'"</string>
+    <string name="str_card_contextmenu_cardtext_delete">Delete</string>
     <string name="str_pager_home">Home</string>
     <string name="str_pager_tags">Tags</string>
     <string name="str_pager_learning">Learning</string>

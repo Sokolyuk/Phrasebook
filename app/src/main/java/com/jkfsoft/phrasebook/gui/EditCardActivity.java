@@ -7,16 +7,18 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.jkfsoft.phrasebook.R;
 import com.jkfsoft.phrasebook.logic.DBMgr;
+import com.jkfsoft.phrasebook.logic.listener.IContextMenu;
 import com.jkfsoft.phrasebook.model.Card;
 import com.jkfsoft.phrasebook.model.CardText;
 import com.jkfsoft.phrasebook.model.Lang;
@@ -66,17 +68,21 @@ public class EditCardActivity extends AppCompatActivity {
         //load data
         cardToControls(mCurrentCard);
 
-
         mCardTextsListViewAdaptor = new CardTextsListViewAdaptor(this);
         mCardTextsListView = (ListView)findViewById(R.id.listView_EditCard_CardTexts);
         mCardTextsListView.setAdapter(mCardTextsListViewAdaptor);
-        //registerForContextMenu(mCardTextsListView);
+        registerForContextMenu(mCardTextsListView);
 
         mCardTagsListViewAdaptor = new CardTagsListViewAdaptor(this);
         mCardTagsListView = (ListView)findViewById(R.id.listView_EditCard_Tags);
         mCardTagsListView.setAdapter(mCardTagsListViewAdaptor);
-        //registerForContextMenu(mCardTagsListView);
+        registerForContextMenu(mCardTagsListView);
 
+/*        registerForContextMenu((View)findViewById(R.id.cardView_listView_EditCard_CardTexts));
+
+        registerForContextMenu((View)findViewById(R.id.cardView_listView_EditCard_Tags));
+        registerForContextMenu((View)findViewById(R.id.rrrr));
+        registerForContextMenu((View)findViewById(R.id.rrrr111));*/
 
         ((FloatingActionButton) findViewById(R.id.fab)).setOnClickListener(v->{
 
@@ -323,6 +329,93 @@ public class EditCardActivity extends AppCompatActivity {
         }
 
     }
+
+    /**
+     * Setup context menu
+     *
+     * @param menu
+     * @param v
+     * @param menuInfo
+     */
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) menuInfo;
+
+        if (v.getId() == R.id.listView_EditCard_CardTexts) {
+            CardText ct = (CardText)((ListView)v).getItemAtPosition(acmi.position);
+
+            menu.setHeaderTitle(String.format(getString(R.string.str_card_contextmenu_cardtext_header), ct.getLang().getName() + " " + (ct.getText().length()<10?ct.getText():ct.getText().substring(0, 10) + "...")));
+            menu.add(0, v.getId(), IContextMenu.cmCardTextAdd, getString(R.string.str_card_contextmenu_cardtext_add));
+            menu.add(0, v.getId(), IContextMenu.cmCardTextEdit, getString(R.string.str_card_contextmenu_cardtext_edit));
+            menu.add(0, v.getId(), IContextMenu.cmCardTextDelete, getString(R.string.str_card_contextmenu_cardtext_delete));
+        }else if (v.getId() == R.id.listView_EditCard_Tags) {
+            Tag t = (Tag)((ListView)v).getItemAtPosition(acmi.position);
+
+            menu.add(0, v.getId(), IContextMenu.cmCardTagAdd, getString(R.string.str_card_contextmenu_cardtag_add));
+            menu.add(0, v.getId(), IContextMenu.cmCardTagDrop, String.format(getString(R.string.str_card_contextmenu_cardtag_drop), t.getName().length()<13?t.getName():t.getName().substring(0, 13) + "..."));
+
+        } else {
+
+            menu.add(0, v.getId(), IContextMenu.cmCardTagAdd, getString(R.string.str_card_contextmenu_cardtag_add) + " " + v.getClass().getSimpleName());
+
+        }
+
+    }
+
+    /**
+     * Local optimization of source code
+     *
+     * @param item
+     * @return
+     */
+    /*protected Card cardByMenuItem(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        return (Card)mCardsListView.getItemAtPosition(info.position);
+    }*/
+
+    /**
+     * Handling of context menu events
+     *
+     * @param item
+     * @return
+     */
+    /*@Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (getUserVisibleHint()) {
+
+            switch (item.getOrder()){
+                case IContextMenu.cmCardEdit:
+                    //start EditCard activity for a selected card in db
+                    Intent i = new Intent(getActivity(), EditCardActivity.class);
+                    i.putExtra("id", cardByMenuItem(item).getId());
+                    startActivity(i);
+                    break;
+                case IContextMenu.cmCardDelete:
+                    //async request to delete selected card from db
+                    Card c = cardByMenuItem(item);
+                    DBMgr.deleteCardThr(getActivity(), c, new IThrRes() {
+                        @Override
+                        public void onSuccess(Object res) {
+                            //deleting is done
+                            mCardsListViewAdaptor.notifyDataSetChanged();
+                            MainActivity.showMess(getContext(), String.format("Card '%s' deleted. Recaff = '%s'", String.valueOf(c.getId()), String.valueOf(res == null?0:(Integer)res)));
+                        }
+                        @Override
+                        public void onException(Exception e) {
+                            //when deleting error occured
+                            MainActivity.showMess(getContext(), e.getMessage());
+                        }
+                    });
+                    break;
+                default:
+            }
+            return super.onContextItemSelected(item);
+        }
+        return false;
+
+    }*/
 
 }
 

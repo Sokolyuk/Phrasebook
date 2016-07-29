@@ -74,7 +74,7 @@ public class Card extends ADataSaveControlledRow implements IDataSaveControlled 
      * Callback interface for tryAddCardText
      */
     public interface IGetCardText {
-        public CardText getCardText();
+        CardText getCardText();
     }
 
     /**
@@ -97,7 +97,7 @@ public class Card extends ADataSaveControlledRow implements IDataSaveControlled 
      * Callback interface for tryAddTag
      */
     public interface IGetTag {
-        public Tag getTag();
+        Tag getTag();
     }
 
     @Override
