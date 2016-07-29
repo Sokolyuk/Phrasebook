@@ -1,7 +1,7 @@
 package com.jkfsoft.phrasebook.logic.db.structure;
 
 /**
- * Created by Alfa on 28.07.2016.
+ * Created by Dmitry Sokoyuk on 28.07.2016.
  */
 public class TblCard_tag implements ITblCard_tag {
     /**

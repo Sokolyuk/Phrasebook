@@ -1,11 +1,11 @@
 package com.jkfsoft.phrasebook.logic.db.structure;
 
 /**
- * Created by Alfa on 27.07.2016.
+ * Created by Dmitry Sokoyuk on 27.07.2016.
  */
 public class TblLangs extends ATbl implements ITblLangs {
 
-    public static final String TBL_NAME = "land";
+    public static final String TBL_NAME = "lang";
 
     private TblLangs() {
     }

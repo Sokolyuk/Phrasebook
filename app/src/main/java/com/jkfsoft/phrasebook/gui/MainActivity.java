@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private static List<Tag> mTags;
     private static List<Lang> mLangs;
     private static DbOpenHelper mOpenHelper;
+    public static String[] db_script_create;
+    public static String[] db_script_drop;
     //endregion
 
     //region navigation
@@ -56,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db_script_create = getResources().getStringArray(R.array.db_script_create);
+        db_script_drop = getResources().getStringArray(R.array.db_script_drop);
 
         //region app data init & load
         mOpenHelper = DbOpenHelper.getInstance(this);
@@ -108,12 +113,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         //endregion
-
-        Intent intent = new Intent(this, EditCardTextActivity.class);
-        intent.putExtra(EditCardTextActivity.PARAM_TEXT, "text123");
-        intent.putExtra(EditCardTextActivity.PARAM_LANG_ID, 1);
-        startActivityForResult(intent, GUIConsts.ACTIVITY_REQUEST_CODE_EDIT_CARD_TEXT);
-
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -250,4 +249,9 @@ public class MainActivity extends AppCompatActivity {
     }
     //endregion
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

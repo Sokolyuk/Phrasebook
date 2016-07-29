@@ -82,4 +82,17 @@ public abstract class ADataSaveControlledRow implements IDataSaveControlledRow {
         deletedRow = true;
     }
 
+    /**
+     * Use to manage of data's state
+     *
+     * deletedRow doesn't matter if insertedRow is true
+     */
+    public void setRowAsUndeleted() {
+        deletedRow = false;
+    }
+
+    public String getDataSaveControlledRowAsString() {
+        return String.format("insertedRow=%s, updatedRow=%s, deletedRow=%s", String.valueOf(insertedRow), String.valueOf(updatedRow), String.valueOf(deletedRow));
+    }
+
 }

@@ -6,15 +6,17 @@ package com.jkfsoft.phrasebook.model;
 public class CardText extends ADataSaveControlledRow {
     private String text;
     private Lang lang;
+    private Long savedLang_id;
 
-    public CardText(boolean isInserted, String text, Lang lang) {
-        if (isInserted) setRowAsInserted(); else setRowAsUpdated();
-        this.text = text;
-        this.lang = lang;
-    }
 
-    public CardText(boolean isInserted, String text, long lang_id, String lang_name) {
-        if (isInserted) setRowAsInserted(); else setRowAsUpdated();
+    /**
+     * By default created as inserted. To set saved all you need call setAsSaved()
+     *
+     * @param text
+     * @param lang_id
+     * @param lang_name
+     */
+    public CardText(String text, long lang_id, String lang_name) {
         this.text = text;
         this.lang = new Lang(lang_id, lang_name);
     }
@@ -43,5 +45,23 @@ public class CardText extends ADataSaveControlledRow {
                 "text='" + text + '\'' +
                 ", lang=" + lang +
                 '}';
+    }
+
+    /**
+     * savedLang_id need to update in db
+     *
+     * @return
+     */
+    public Long getSavedLang_id() {
+        return savedLang_id;
+    }
+
+    /**
+     * Save land_id from db
+     */
+    @Override
+    public void setRowAsSaved() {
+        super.setRowAsSaved();
+        savedLang_id = lang.getId();
     }
 }

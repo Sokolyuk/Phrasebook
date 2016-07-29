@@ -16,5 +16,47 @@
     <string name="editCardTextLangHint">Language</string>
     <string name="err_field_is_empty">Field is empty</string>
     <string name="err_incorrect_double_value">Incorrect double value</string>
+    <string name="err_dublicate_language">Dublicate language</string>
+
+    <string-array name="db_script_create">
+        <item>"CREATE TABLE `tag` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL UNIQUE);"</item>
+        <item>"CREATE TABLE `lang`(`id`INTEGER PRIMARY KEY AUTOINCREMENT,`name`TEXT NOT NULL UNIQUE);"</item>
+        <item>"CREATE TABLE `card`(`id`INTEGER PRIMARY KEY AUTOINCREMENT,`learned` INTEGER default 0);"</item>
+        <item>"CREATE TABLE `card_tag`(`card_id`INTEGER,`tag_id`INTEGER, PRIMARY KEY(card_id,tag_id), FOREIGN KEY(card_id) REFERENCES card(id), FOREIGN KEY(tag_id) REFERENCES tag(id));"</item>
+        <item>"CREATE TABLE `card_lang`(`card_id`INTEGER,`lang_id`INTEGER,`text`TEXT NOT NULL,PRIMARY KEY(card_id,lang_id),	FOREIGN KEY(card_id) REFERENCES card(id),FOREIGN KEY(lang_id) REFERENCES lang(id));"</item>
+        <item>"create view vwu_card as select c.id as `id`, cl.lang_id as `lang_id`, l.name as `lang_name`, cl.text as `text`, t.id as `tag_id`, t.name as `tag_name`, c.learned from card c left outer join card_tag ct on ct.card_id=c.id left outer join tag t on t.id=ct.tag_id left outer join card_lang cl on cl.card_id=c.id left outer join lang l on l.id=cl.lang_id order by c.id;"</item>
+        <item>"insert into `lang` (name)values('En');"</item>
+        <item>"insert into `lang` (name)values('De');"</item>
+        <item>"insert into `lang` (name)values('Ru');"</item>
+        <item>"insert into tag (`name`)values('Hochsprache');"</item>
+        <item>"insert into tag (`name`)values('Umgangsprach');"</item>
+        <item>"insert into tag (`name`)values('Geschäfte');"</item>
+        <item>"insert into tag (`name`)values('Offene Verkehr');"</item>
+        <item>"insert into tag (`name`)values('Hause');"</item>
+        <item>"insert into tag (`name`)values('Straße');"</item>
+        <item>"insert into tag (`name`)values('Arbeit');"</item>
+        <item>"insert into card (learned)values(0);"</item>
+        <item>"insert into card (learned)values(0);"</item>
+        <item>"insert into card (learned)values(0);"</item>
+        <item>"insert into card (learned)values(0);"</item>
+        <item>"insert into card (learned)values(0);"</item>
+        <item>"insert into card_tag (card_id,tag_id)values(1,1);"</item>
+        <item>"insert into card_tag (card_id,tag_id)values(1,2);"</item>
+        <item>"insert into card_tag (card_id,tag_id)values(2,3);"</item>
+        <item>"insert into card_lang(card_id,lang_id,text)values(1,1,'All roads lead to Rome');"</item>
+        <item>"insert into card_lang(card_id,lang_id,text)values(1,2,'Alle Wege führen nach Rom');"</item>
+        <item>"insert into card_lang(card_id,lang_id,text)values(1,3,'Все дороги ведут в Рим');"</item>
+        <item>"insert into card_lang(card_id,lang_id,text)values(2,1,'Cause time fun hour');"</item>
+        <item>"insert into card_lang(card_id,lang_id,text)values(2,3,'Делу время, потехе час');"</item>
+    </string-array>
+
+    <string-array name="db_script_drop">
+        <item>"drop TABLE if exists `card_tag`;"</item>
+        <item>"drop TABLE if exists `card_lang`;"</item>
+        <item>"drop TABLE if exists `tag`;"</item>
+        <item>"drop TABLE if exists `lang`;"</item>
+        <item>"drop TABLE if exists `card`;"</item>
+    </string-array>
+
 
 </resources>

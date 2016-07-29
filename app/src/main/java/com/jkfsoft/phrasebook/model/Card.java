@@ -58,6 +58,19 @@ public class Card extends ADataSaveControlledRow implements IDataSaveControlled 
     }
 
     /**
+     * Called from db-modul with commit
+     */
+    public void setAsSaved() {
+        for(Tag t: tags){
+            t.setRowAsSaved();
+        }
+        for(CardText ct: cardTexts){
+            ct.setRowAsSaved();
+        }
+        setRowAsSaved();
+    }
+
+    /**
      * Callback interface for tryAddCardText
      */
     public interface IGetCardText {

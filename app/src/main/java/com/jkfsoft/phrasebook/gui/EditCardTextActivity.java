@@ -1,6 +1,5 @@
 package com.jkfsoft.phrasebook.gui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,7 +7,6 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-
 import com.jkfsoft.phrasebook.R;
 import com.jkfsoft.phrasebook.model.CardText;
 import com.jkfsoft.phrasebook.model.Lang;
@@ -16,16 +14,23 @@ import com.jkfsoft.phrasebook.utils.Edit;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 /**
+ *
+ * Edit CardText Activity
+ *
  * Created by Dmitry Sokolyuk on 28.07.2016.
  */
 public class EditCardTextActivity extends AppCompatActivity {
 
     public static final String PARAM_TEXT = "text";
     public static final String PARAM_LANG_ID = "lang_id";
+    public static final String PARAM_LANG_ID_SAVED = "lang_id_saved";
+    public static final String PARAM_LANG_NAME = "lang_name";
 
     private EditText edit_cardText_text;
     private MaterialBetterSpinner edit_cardText_lang;
     private TextInputLayout edit_cardText_textWrapper;
+
+    private Long mLang_id_saved;
 
 
     @Override
@@ -45,6 +50,7 @@ public class EditCardTextActivity extends AppCompatActivity {
         if (b != null) {
             String tmpText = b.getString(PARAM_TEXT);
             long tmpLang_id = b.getLong(PARAM_LANG_ID);
+            mLang_id_saved = b.getLong(PARAM_LANG_ID_SAVED);
 
             if (edit_cardText_text != null) {
                 edit_cardText_text.setText(tmpText);
@@ -64,7 +70,9 @@ public class EditCardTextActivity extends AppCompatActivity {
             Intent result = new Intent();
             result.putExtra(PARAM_TEXT, edit_cardText_text.getText().toString());
             result.putExtra(PARAM_LANG_ID, sl.getId());
-            setResult(Activity.RESULT_OK, result);
+            result.putExtra(PARAM_LANG_ID_SAVED, mLang_id_saved);
+            result.putExtra(PARAM_LANG_NAME, sl.getName());
+            setResult(RESULT_OK, result);
 
             finish();
 
@@ -119,6 +127,17 @@ public class EditCardTextActivity extends AppCompatActivity {
     protected boolean validate() {
         if (Edit.validateText(this, edit_cardText_text, edit_cardText_textWrapper) &
                 Edit.validateSpinner(this, edit_cardText_lang)) {
+            long new_lang_id = getLangBySpinner().getId();
+            int cnt = 0;
+            for(CardText ct: EditCardActivity.getCurrentCard().getCardTexts()){
+                if (ct.getLang().getId() == new_lang_id && ct.getLang().getId() != mLang_id_saved) {
+                    cnt++;
+                    if (cnt > 1) {
+                        MainActivity.showMess(this, getString(R.string.err_dublicate_language));
+                        return false;
+                    }
+                }
+            }
             return true;
         }
         return false;

@@ -26,12 +26,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Lidl"
+                android:text="sdfsdfsdf"
                 android:gravity="left"
                 android:id="@+id/listview_item_tag_name"
                 android:textStyle="bold"
                 android:textSize="25sp"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"
+                android:singleLine="false" />
 
         </LinearLayout>
 

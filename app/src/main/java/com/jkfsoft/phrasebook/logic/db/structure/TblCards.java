@@ -2,7 +2,7 @@ package com.jkfsoft.phrasebook.logic.db.structure;
 
 
 /**
- * Created by Alfa on 27.07.2016.
+ * Created by Dmitry Sokoyuk on 27.07.2016.
  */
 public class TblCards extends ATbl implements ITblCards {
 

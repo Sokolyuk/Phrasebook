@@ -151,7 +151,6 @@ public class FragmentHome extends Fragment {
             } else {
                 return MainActivity.getCards().get(position);
             }
-
         }
 
         @Override
@@ -167,8 +166,6 @@ public class FragmentHome extends Fragment {
             if (convertView == null) {
                 convertView = layoutInflater.inflate(R.layout.listview_item_card, parent, false);
             }
-
-
 
             ViewGroup data_root = (ViewGroup)convertView.findViewById(R.id.listview_item_cars_data_root);
 
@@ -196,7 +193,7 @@ public class FragmentHome extends Fragment {
             View v = layoutInflater.inflate(R.layout.listview_item_cars_data_row, null);
 
             ((TextView)v.findViewById(R.id.card_data_row_lang_name)).setText(ct.getLang().getName());
-            ((TextView)v.findViewById(R.id.card_data_row_text)).setText(ct.getText());
+            ((TextView)v.findViewById(R.id.card_data_row_text)).setText(ct.getText() + " :: " + ct.getDataSaveControlledRowAsString());
 
             data_root.addView(v);
         }

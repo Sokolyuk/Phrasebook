@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.jkfsoft.phrasebook.gui.MainActivity;
 import com.jkfsoft.phrasebook.logic.db.structure.TblCard_tag;
 import com.jkfsoft.phrasebook.logic.db.structure.TblCard_lang;
 import com.jkfsoft.phrasebook.logic.db.structure.TblCards;
@@ -43,131 +45,19 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public synchronized void onCreate(SQLiteDatabase db) {
-        //stub !!! must redesigned
-        db.execSQL("CREATE TABLE `tag` (\n" +
-                    "\t`id`\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                    "\t`name`\tTEXT NOT NULL UNIQUE\n" +
-                    ");");
-        db.execSQL("CREATE TABLE `lang` (\n" +
-                    "\t`id`\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                    "\t`name`\tTEXT NOT NULL UNIQUE\n" +
-                    ");");
-        db.execSQL("CREATE TABLE `card` (\n" +
-                    "\t`id`\tINTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                    "\t`learned` INTEGER default 0\n" +
-                    ");");
-        db.execSQL("CREATE TABLE `card_tag` (\n" +
-                    "\t`card_id`\tINTEGER,\n" +
-                    "\t`tag_id`\tINTEGER,\n" +
-                    "\tPRIMARY KEY(card_id,tag_id),\n" +
-                    "\tFOREIGN KEY(card_id) REFERENCES card(id),\n" +
-                    "\tFOREIGN KEY(tag_id) REFERENCES tag(id)\n" +
-                    ");");
-        db.execSQL("CREATE TABLE `card_lang` (\n" +
-                    "\t`card_id`\tINTEGER,\n" +
-                    "\t`lang_id`\tINTEGER,\n" +
-                    "\t`text`\tTEXT NOT NULL,\n" +
-                    "\tPRIMARY KEY(card_id,lang_id),\n" +
-                    "\tFOREIGN KEY(card_id) REFERENCES card(id),\n" +
-                    "\tFOREIGN KEY(lang_id) REFERENCES lang(id)\n" +
-                    ");");
-        db.execSQL("create view vwu_card as select c.id as `id`, cl.lang_id as `lang_id`, l.name as `lang_name`, cl.text as `text`, t.id as `tag_id`, t.name as `tag_name`, c.learned from card c\n" +
-                    "\tleft outer join card_tag ct on ct.card_id=c.id\n" +
-                    "\tleft outer join tag t on t.id=ct.tag_id\n" +
-                    "\tleft outer join card_lang cl on cl.card_id=c.id\n" +
-                    "\tleft outer join lang l on l.id=cl.lang_id\n" +
-                    "order by c.id;");
+        //load sql-script from resources
+        for(String sql: MainActivity.db_script_create) {
+            db.execSQL(sql);
+        }
 
-        db.execSQL("insert into `lang` (name)values('En');\n");
-        db.execSQL("insert into `lang` (name)values('De');\n");
-        db.execSQL("insert into `lang` (name)values('Ru');\n");
-
-        db.execSQL("insert into tag (`name`)values('111');\n");
-        db.execSQL("insert into tag (`name`)values('222');\n");
-        db.execSQL("insert into tag (`name`)values('333');");
-        db.execSQL("insert into tag (`name`)values('444');");
-        db.execSQL("insert into tag (`name`)values('555');\n");
-        db.execSQL("insert into tag (`name`)values('666');");
-        db.execSQL("insert into tag (`name`)values('777');\n");
-        db.execSQL("insert into tag (`name`)values('888');\n");
-        db.execSQL("insert into tag (`name`)values('999');\n");
-        db.execSQL("insert into tag (`name`)values('100');\n");
-        /*db.execSQL("insert into tag (`name`)values('10Arbeit4');\n");
-        db.execSQL("insert into tag (`name`)values('11Arbeit5');\n");
-        db.execSQL("insert into tag (`name`)values('12Arbeit6');\n");
-        db.execSQL("insert into tag (`name`)values('13Arbeit7');\n");
-        db.execSQL("insert into tag (`name`)values('14Arbeit8');\n");
-        db.execSQL("insert into tag (`name`)values('15Arbeit9');\n");
-        db.execSQL("insert into tag (`name`)values('16Arbeit10');\n");
-        db.execSQL("insert into tag (`name`)values('17Arbeit11');\n");
-        db.execSQL("insert into tag (`name`)values('18Arbeit12');\n");*/
-
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-        db.execSQL("insert into card (learned)values(0);\n");
-
-        db.execSQL("insert into card_tag (card_id,tag_id)values(1,1);\n");
-        db.execSQL("insert into card_tag (card_id,tag_id)values(1,2);\n");
-        db.execSQL("insert into card_tag (card_id,tag_id)values(1,3);\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,1,'11');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,2,'12');");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(1,3,'13');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,1,'21');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,2,'22');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(2,3,'23');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(3,1,'31');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(3,2,'32');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(3,3,'33');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(4,1,'41');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(4,2,'42');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(5,1,'51');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,1,'61');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,2,'62');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(6,3,'63');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(7,1,'71');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(7,2,'72');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(8,1,'81');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,1,'91');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,2,'92');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(9,3,'93');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(10,1,'10-1 -   3');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(10,2,'10-2 - 3');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(10,3,'10-3 - 3');\n");
-
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(11,1,'11 - 1 - 2');\n");
-        db.execSQL("insert into card_lang(card_id,lang_id,text)values(11,2,'12 - 2 - 2');\n");
-
-        //db.setForeignKeyConstraintsEnabled(true);
     }
 
     @Override
     public synchronized void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        //stub !!! must redesigned
-        db.execSQL("drop view if exists vwu_card;");
-        db.execSQL("drop TABLE if exists `card_tag`;");
-        db.execSQL("drop TABLE if exists `card_lang`;");
-        db.execSQL("drop TABLE if exists `tag`;");
-        db.execSQL("drop TABLE if exists `lang`;");
-        db.execSQL("drop TABLE if exists `card`;");
+        //load sql-script from resources
+        for(String sql: MainActivity.db_script_drop) {
+            db.execSQL(sql);
+        }
 
         this.onCreate(db);
     }
@@ -181,7 +71,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
             if (cur != null) {
                 while(cur.moveToNext()){
                     long id = cur.getLong(cur.getColumnIndex(TblLangs.COL_NAME_ID));
-                    String name = cur.getString(cur.getColumnIndex(TblLangs.TBL_NAME));
+                    String name = cur.getString(cur.getColumnIndex(TblLangs.COL_NAME_NAME));
                     res.add(new Lang(id, name));
                 }
             }
@@ -271,7 +161,9 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                         //try add new CardText by id
                         card.tryAddCardText(lang_id, ()->{
                             //if id not found then callback
-                            return new CardText(false, cur.getString(i_col_text), lang_id, cur.getString(i_col_lang_name));
+                            CardText ct = new CardText(cur.getString(i_col_text), lang_id, cur.getString(i_col_lang_name));
+                            ct.setRowAsSaved();
+                            return ct;
                         });
                     }
 
@@ -281,13 +173,16 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                         //try add new Tag by id
                         card.tryAddTag(tag_id, ()->{
                             //if id not found then callback
-                            return new Tag(tag_id, cur.getString(i_col_tag_name));
+                            Tag t = new Tag(tag_id, cur.getString(i_col_tag_name));
+                            t.setRowAsSaved();
+                            return t;
                         });
                     }
 
                     //only first row of resultset need to add as new element
                     if (id != id_prev) {
                         id_prev = id;
+                        card.setRowAsSaved();
                         res.add(card);
                     }
                 }
@@ -354,50 +249,27 @@ public class DbOpenHelper extends SQLiteOpenHelper {
             db.beginTransaction();
             try{
                 if (c.isModifiedChildData()) {
-                    //update card_tag
+                    //delete sub tag
+                    recaff += db.delete(TblCard_tag.TBL_NAME, String.format("%s=%s", TblCard_tag.COL_NAME_CARD_ID, String.valueOf(card_id)), null);
+
                     for(Tag t: c.getTags()) {
-                        if (t.isInsertedRow()) {
-                            //insert sub tag
-
-                            ContentValues card_tag_cv = new ContentValues();
-                            card_tag_cv.put(TblCard_tag.COL_NAME_CARD_ID, card_id);
-                            card_tag_cv.put(TblCard_tag.COL_NAME_TAG_ID, t.getId());
-                            db.insert(TblCard_tag.TBL_NAME, null, card_tag_cv);
-                            recaff++;
-                        } else if (t.isUpdatedRow()) {
-                            //update sub tag
-
-                            //must never here be, in this configuration
-                            //..
-                            if (t.getId() == null || t.getId() < 1) throw new Exception(DbConsts.ERR_IDUNASSIGNED);
-
-                            ContentValues card_tag_cv = new ContentValues();
-                            card_tag_cv.put(TblCard_tag.COL_NAME_TAG_ID, t.getId());
-                            recaff += db.update(TblCard_tag.TBL_NAME, card_tag_cv, String.format("%s=%s", TblCard_tag.COL_NAME_CARD_ID, String.valueOf(card_id)), null);
-                        } else if (t.isDeletedRow()) {
-                            //delete sub tag
-                            recaff += db.delete(TblCard_tag.TBL_NAME, String.format("%s=%s and %s=%s", TblCard_tag.COL_NAME_CARD_ID, String.valueOf(card_id), TblCard_tag.COL_NAME_TAG_ID, String.valueOf(t.getId())), null);
-                        }
-                        t.setRowAsSaved();
+                        //insert sub tag
+                        ContentValues card_tag_cv = new ContentValues();
+                        card_tag_cv.put(TblCard_tag.COL_NAME_CARD_ID, card_id);
+                        card_tag_cv.put(TblCard_tag.COL_NAME_TAG_ID, t.getId());
+                        db.insert(TblCard_tag.TBL_NAME, null, card_tag_cv);
+                        recaff++;
                     }
 
-                    //update card_lang
+                    recaff += db.delete(TblCard_lang.TBL_NAME, String.format("%s=%s", TblCard_lang.COL_NAME_CARD_ID, String.valueOf(card_id)), null);
+
                     for(CardText ct: c.getCardTexts()) {
-                        if (ct.isInsertedRow()) {
-                            ContentValues card_lang_cv = new ContentValues();
-                            card_lang_cv.put(TblCard_lang.COL_NAME_CARD_ID, card_id);
-                            card_lang_cv.put(TblCard_lang.COL_NAME_LANG_ID, ct.getLang().getId());
-                            db.insert(TblCard_lang.TBL_NAME, null, card_lang_cv);
-                            recaff++;
-                        } else if (ct.isUpdatedRow()) {
-                            ContentValues card_lang_cv = new ContentValues();
-                            card_lang_cv.put(TblCard_lang.COL_NAME_LANG_ID, ct.getLang().getId());
-                            card_lang_cv.put(TblCard_lang.COL_NAME_TEXT, ct.getText());
-                            recaff += db.update(TblCard_lang.TBL_NAME, card_lang_cv, String.format("%s=%s", TblCard_lang.COL_NAME_CARD_ID, String.valueOf(card_id)), null);
-                        } else if (ct.isDeletedRow()) {
-                            recaff += db.delete(TblCard_lang.TBL_NAME, String.format("%s=%s and %s=%s", TblCard_lang.COL_NAME_CARD_ID, String.valueOf(card_id), TblCard_lang.COL_NAME_LANG_ID, String.valueOf(ct.getLang().getId())), null);
-                        }
-                        ct.setRowAsSaved();
+                        ContentValues card_lang_cv = new ContentValues();
+                        card_lang_cv.put(TblCard_lang.COL_NAME_CARD_ID, card_id);
+                        card_lang_cv.put(TblCard_lang.COL_NAME_LANG_ID, ct.getLang().getId());
+                        card_lang_cv.put(TblCard_lang.COL_NAME_TEXT, ct.getText());
+                        db.insert(TblCard_lang.TBL_NAME, null, card_lang_cv);
+                        recaff++;
                     }
                 }
 
@@ -406,11 +278,12 @@ public class DbOpenHelper extends SQLiteOpenHelper {
                     ContentValues card_cv = new ContentValues();
                     card_cv.put(TblCards.COL_NAME_LEARNED, c.getLearned());
                     recaff += db.update(TblCards.TBL_NAME, card_cv, String.format("%s=%s", TblCards.COL_NAME_ID, String.valueOf(card_id)), null);
-                    c.setRowAsSaved();
                 }
 
                 //commit
                 db.setTransactionSuccessful();
+
+                c.setAsSaved();
 
                 //count of records affected. Used for extra controll of actions
                 return recaff;
